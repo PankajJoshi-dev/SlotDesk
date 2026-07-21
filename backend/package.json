@@ -1,0 +1,12 @@
+{
+  "name": "slotdesk",
+  "version": "1.0.0",
+  "description": "Slot booking sytem",
+  "license": "ISC",
+  "author": "pankaj",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
