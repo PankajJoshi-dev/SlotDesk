@@ -1,9 +1,16 @@
 import express from "express";
-
 const app = express();
+
+import cookieParser from "cookie-parser";
+import errorHandler from "./middlewares/errorHandler.middleware.js";
+
+import authRouter from "../src/routes/auth.routes.js";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+app.use("/api/v1/auth", authRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -11,5 +18,7 @@ app.get("/", (req, res) => {
     message: "Welcome to SlotDesk!",
   });
 });
+
+app.use(errorHandler);
 
 export default app;
