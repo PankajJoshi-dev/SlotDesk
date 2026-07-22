@@ -2,9 +2,8 @@ import * as z from "zod";
 
 const registerSchema = z.object({
   fullName: z
-    .string()
+    .string({ error: "Full Name is required." })
     .trim()
-    .nonempty("Name is required.")
     .min(2, "Name must be atleast 2 characters.")
     .max(30, "Name too long.")
     .regex(
@@ -12,25 +11,22 @@ const registerSchema = z.object({
       "Name must contain only letters and spaces.",
     ),
   email: z
-    .string()
+    .string({ error: "Email is required." })
     .trim()
-    .nonempty("Email is required")
     .toLowerCase()
     .email("Invalid email format."),
   password: z
-    .string()
+    .string({ error: "Password is required." })
     .trim()
-    .nonempty("Password is required.")
     .min(6, "Password must be at least 6 characters."),
   confirmPassword: z
-    .string()
+    .string({ error: "Please confirm your password." })
     .trim()
-    .nonempty("Please confirm the password")
     .min(6, "Confirmed password must be at least 6 characters."),
 });
 
 const loginSchema = z.object({
-  email: z.string().nonempty("Email is required").email("Invalid email."),
-  password: z.string().nonempty("Password is required."),
+  email: z.string({ error: "Email is required." }).email("Invalid email."),
+  password: z.string({ error: "Password is required." }),
 });
 export { registerSchema, loginSchema };
