@@ -15,6 +15,32 @@ const facilitySchema = new mongoose.Schema(
       required: true,
     },
 
+    facilityType: {
+      type: String,
+      enum: [
+        "Sports",
+        "Gym",
+        "Swimming Pool",
+        "Auditorium",
+        "Classroom",
+        "Laboratory",
+        "Library",
+        "Meeting Room",
+        "Event Hall",
+        "Music Room",
+        "Dance Studio",
+        "Coworking Space",
+        "Court",
+        "Gaming Room",
+        "Medical Facility",
+        "Parking",
+        "Workspace",
+        "Club Room",
+        "Multipurpose Hall",
+        "Other",
+      ],
+    },
+
     location: {
       type: String,
       required: true,
@@ -53,17 +79,17 @@ const facilitySchema = new mongoose.Schema(
         {
           type: String,
           enum: [
-            "MONDAY",
-            "TUESDAY",
-            "WEDNESDAY",
-            "THURSDAY",
-            "FRIDAY",
-            "SATURDAY",
-            "SUNDAY",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
           ],
         },
       ],
-      default: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"],
+      default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     },
 
     closedDates: [
@@ -82,4 +108,6 @@ const facilitySchema = new mongoose.Schema(
   },
 );
 
-export const Facility = mongoose.model("Facility", facilitySchema);
+const Facility = mongoose.model("Facility", facilitySchema);
+
+export default Facility;
