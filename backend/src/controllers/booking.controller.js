@@ -38,7 +38,7 @@ const createBooking = asyncHandler(async (req, res) => {
   }
 
   const totalSlots =
-    (facility.endTime - facility.startTime) / facility.slotDuration;
+    (facility.closingTime - facility.openingTime) / facility.slotDuration;
 
   if (bookingInfo.slotIndex < 0 || bookingInfo.slotIndex >= totalSlots) {
     throw new ApiError(
