@@ -12,7 +12,7 @@ const createFacility = asyncHandler(async (req, res) => {
     );
   }
 
-  const { ownerEmail, ...facilityData } = req.validatedData;
+  const { ownerEmail, ...facilityData } = req.validatedBody;
 
   const existingFacility = await Facility.findOne({
     name: facilityData.name,
@@ -51,12 +51,12 @@ const createFacility = asyncHandler(async (req, res) => {
 const filterFacilities = asyncHandler(async (req, res) => {
   const filters = {};
 
-  if (req.query.location) {
-    filters.location = req.query.location;
+  if (req.validatedQuery.location) {
+    filters.location = req.validatedQuery.location;
   }
 
-  if (req.query.facilityType) {
-    filters.facilityType = req.query.facilityType;
+  if (req.validatedQuery.facilityType) {
+    filters.facilityType = req.validatedQuery.facilityType;
   }
 
   const facilities = await Facility.find(filters);
@@ -67,9 +67,9 @@ const filterFacilities = asyncHandler(async (req, res) => {
 });
 
 const getFacility = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { facilityId } = req.validatedParams;
 
-  const facility = await Facility.findById(id);
+  const facility = await Facility.findById(facilityId);
 
   if (!facility) {
     throw new ApiError(404, "Facility not found.");
@@ -81,9 +81,9 @@ const getFacility = asyncHandler(async (req, res) => {
 });
 
 const editFacility = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { facilityId } = req.validatedParams;
 
-  const targetFacility = await Facility.findById(id);
+  const targetFacility = await Facility.findById(facilityId);
 
   if (!targetFacility) {
     throw new ApiError(404, "Facility not found.");
@@ -96,14 +96,14 @@ const editFacility = asyncHandler(async (req, res) => {
     );
   }
 
-  if (req.validatedData.name || req.validatedData.location) {
-    const newName = req.validatedData.name ?? targetFacility.name;
-    const newLocation = req.validatedData.location ?? targetFacility.location;
+  if (req.validatedBody.name || req.validatedBody.location) {
+    const newName = req.validatedBody.name ?? targetFacility.name;
+    const newLocation = req.validatedBody.location ?? targetFacility.location;
 
     const existingFacility = await Facility.findOne({
       name: newName,
       location: newLocation,
-      _id: { $ne: id },
+      _id: { $ne: facilityId },
     });
 
     if (existingFacility) {
@@ -115,8 +115,8 @@ const editFacility = asyncHandler(async (req, res) => {
   }
 
   const updatedFacility = await Facility.findByIdAndUpdate(
-    id,
-    req.validatedData,
+    facilityId,
+    req.validatedBody,
     {
       new: true,
       runValidators: true,
@@ -131,9 +131,9 @@ const editFacility = asyncHandler(async (req, res) => {
 });
 
 const deleteFacility = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { facilityId } = req.validatedParams;
 
-  const targetFacility = await Facility.findById(id);
+  const targetFacility = await Facility.findById(facilityId);
 
   if (!targetFacility) {
     throw new ApiError(404, "Facility not found.");
@@ -146,7 +146,7 @@ const deleteFacility = asyncHandler(async (req, res) => {
     );
   }
 
-  await Facility.findByIdAndDelete(id);
+  await Facility.findByIdAndDelete(facilityId);
 
   return res
     .status(200)
