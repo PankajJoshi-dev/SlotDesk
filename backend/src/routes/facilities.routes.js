@@ -8,12 +8,14 @@ import {
   deleteFacility,
 } from "../controllers/facilities.controller.js";
 
+import { getFacilityBookings } from "../controllers/booking.controller.js";
+
 import {
   createFacilitySchema,
   editFacilitySchema,
   filterFacilitiesSchema,
 } from "../validators/facilities.validator.js";
-
+import { getFacilityBookingsQuerySchema } from "../validators/booking.validator.js";
 import { objectIdParamsSchema } from "../validators/common.validator.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
@@ -38,6 +40,15 @@ facilitiesRouter
     verifyJWT,
     validate(objectIdParamsSchema("facilityId"), "params"),
     deleteFacility,
+  );
+
+facilitiesRouter
+  .route("/:facilityId/bookings")
+  .get(
+    verifyJWT,
+    validate(objectIdParamsSchema("facilityId"), "params"),
+    validate(getFacilityBookingsQuerySchema, "query"),
+    getFacilityBookings,
   );
 
 export default facilitiesRouter;
