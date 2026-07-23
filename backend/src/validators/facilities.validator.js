@@ -1,4 +1,6 @@
 import * as z from "zod";
+import { objectIdSchema } from "./common.validator.js";
+import { dateSchema } from "./common.validator.js";
 
 const FACILITY_TYPES = [
   "Sports",
@@ -86,7 +88,7 @@ const facilitySchema = z.object({
     .array(z.enum(DAYS))
     .default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]),
 
-  closedDates: z.array(z.coerce.date()).default([]),
+  closedDates: z.array(dateSchema).default([]),
 
   isActive: z.coerce.boolean().default(true).optional(),
 });
@@ -120,4 +122,14 @@ const editFacilitySchema = facilitySchema
     },
   );
 
-export { createFacilitySchema, editFacilitySchema };
+const filterFacilitiesSchema = z.object({
+  facilityType: z.enum(FACILITY_TYPES).optional(),
+
+  location: z
+    .string()
+    .trim()
+    .min(2, "Location must be at least 2 characters.")
+    .optional(),
+});
+
+export { createFacilitySchema, editFacilitySchema, filterFacilitiesSchema };
