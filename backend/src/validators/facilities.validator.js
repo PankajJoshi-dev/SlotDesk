@@ -1,6 +1,5 @@
 import * as z from "zod";
-import { objectIdSchema } from "./common.validator.js";
-import { dateSchema } from "./common.validator.js";
+import { objectIdSchema, dateSchema } from "./common.validator.js";
 
 const FACILITY_TYPES = [
   "Sports",

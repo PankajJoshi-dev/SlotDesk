@@ -1,8 +1,12 @@
 import * as z from "zod";
-import { objectIdSchema, dateSchema } from "./common.validator.js";
+import {
+  objectIdSchema,
+  dateSchema,
+  bookingDateSchema,
+} from "./common.validator.js";
 
 const bookingCreationSchema = z.object({
-  date: dateSchema,
+  date: bookingDateSchema,
 
   slotIndex: z.coerce
     .number({
