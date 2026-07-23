@@ -166,14 +166,9 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
 
   console.log(facility);
 
-  const totalSlots =
-    (facility.closingTime - facility.openingTime) / facility.slotDuration;
-
-  console.log(facility.closingTimeTime);
-
-  console.log(facility.startTime);
-
-  console.log(totalSlots);
+  const totalSlots = Math.floor(
+    (facility.closingTime - facility.openingTime) / facility.slotDuration,
+  );
 
   const bookings = await Booking.find({
     facility: facilityId,

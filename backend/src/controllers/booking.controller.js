@@ -37,14 +37,34 @@ const createBooking = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Party size exceeds facility capacity.");
   }
 
-  const totalSlots =
-    (facility.closingTime - facility.openingTime) / facility.slotDuration;
+  const totalSlots = Math.floor(
+    (facility.closingTime - facility.openingTime) / facility.slotDuration,
+  );
 
   if (bookingInfo.slotIndex < 0 || bookingInfo.slotIndex >= totalSlots) {
     throw new ApiError(
       400,
       "Can not book this slot. The selected slot is not available in this facility.",
     );
+  }
+
+  // Resolving Same day expired slot booking bug
+  const now = new Date();
+
+  const minutesSinceMidnight = now.getUTCHours() * 60 + now.getUTCMinutes();
+
+  const currentPossibleSlot = Math.floor(
+    (minutesSinceMidnight - facility.openingTime) / facility.slotDuration,
+  );
+
+  const today = now;
+  today.setUTCHours(0, 0, 0, 0); // Midnight
+  if (
+    bookingInfo.date.getTime() === today.getTime() &&
+    currentPossibleSlot >= bookingInfo.slotIndex
+  ) {
+    // Midnight timestamp match means same day
+    throw new ApiError(400, "Slot expired.");
   }
 
   const slotBookings = await Booking.find({
