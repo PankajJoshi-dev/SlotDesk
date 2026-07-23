@@ -6,6 +6,7 @@ import {
   getFacility,
   editFacility,
   deleteFacility,
+  getFacilitySlots,
 } from "../controllers/facilities.controller.js";
 
 import { getFacilityBookings } from "../controllers/booking.controller.js";
@@ -14,6 +15,7 @@ import {
   createFacilitySchema,
   editFacilitySchema,
   filterFacilitiesSchema,
+  getFacilitySlotsSchema,
 } from "../validators/facilities.validator.js";
 import { getFacilityBookingsQuerySchema } from "../validators/booking.validator.js";
 import { objectIdParamsSchema } from "../validators/common.validator.js";
@@ -49,6 +51,15 @@ facilitiesRouter
     validate(objectIdParamsSchema("facilityId"), "params"),
     validate(getFacilityBookingsQuerySchema, "query"),
     getFacilityBookings,
+  );
+
+facilitiesRouter
+  .route("/:facilityId/slots")
+  .get(
+    verifyJWT,
+    validate(objectIdParamsSchema("facilityId"), "params"),
+    validate(getFacilitySlotsSchema, "query"),
+    getFacilitySlots,
   );
 
 export default facilitiesRouter;

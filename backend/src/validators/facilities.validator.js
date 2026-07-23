@@ -131,4 +131,13 @@ const filterFacilitiesSchema = z.object({
     .optional(),
 });
 
-export { createFacilitySchema, editFacilitySchema, filterFacilitiesSchema };
+const getFacilitySlotsSchema = z.object({
+  date: dateSchema,
+});
+
+export {
+  createFacilitySchema,
+  editFacilitySchema,
+  filterFacilitiesSchema,
+  getFacilitySlotsSchema,
+};

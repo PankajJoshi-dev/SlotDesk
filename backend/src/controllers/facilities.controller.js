@@ -3,6 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import Facility from "../models/facility.model.js";
 import User from "../models/user.model.js";
+import Booking from "../models/booking.model.js";
 
 const createFacility = asyncHandler(async (req, res) => {
   if (req.user.role !== "admin") {
@@ -153,10 +154,63 @@ const deleteFacility = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Facility deleted successfully."));
 });
 
+const getFacilitySlots = asyncHandler(async (req, res) => {
+  const { facilityId } = req.validatedParams;
+  const { date } = req.validatedQuery;
+
+  const facility = await Facility.findById(facilityId);
+
+  if (!facility) {
+    throw new ApiError(404, "Facility not found.");
+  }
+
+  console.log(facility);
+
+  const totalSlots =
+    (facility.closingTime - facility.openingTime) / facility.slotDuration;
+
+  console.log(facility.closingTimeTime);
+
+  console.log(facility.startTime);
+
+  console.log(totalSlots);
+
+  const bookings = await Booking.find({
+    facility: facilityId,
+    date,
+    status: "BOOKED",
+  });
+
+  const slots = {};
+  for (let i = 0; i < totalSlots; i++) {
+    slots[i] = {
+      remaining: facility.capacity,
+      available: true,
+    };
+  }
+
+  for (const booking of bookings) {
+    slots[booking.slotIndex].remaining =
+      slots[booking.slotIndex].remaining - booking.partySize;
+    slots[booking.slotIndex].available = slots[booking.slotIndex].remaining > 0;
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        slots,
+        "Facility slot availability fetched successfully.",
+      ),
+    );
+});
+
 export {
   createFacility,
   filterFacilities,
   getFacility,
   editFacility,
   deleteFacility,
+  getFacilitySlots,
 };
