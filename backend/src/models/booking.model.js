@@ -19,18 +19,9 @@ const bookingSchema = new mongoose.Schema(
       required: true,
     },
 
-    startTime: {
-      type: Number, // Minutes since midnight
+    slotIndex: {
+      type: Number,
       required: true,
-      min: 0,
-      max: 1439,
-    },
-
-    endTime: {
-      type: Number, // Minutes since midnight
-      required: true,
-      min: 1,
-      max: 1440,
     },
 
     partySize: {
@@ -51,4 +42,6 @@ const bookingSchema = new mongoose.Schema(
   },
 );
 
-export const Booking = mongoose.model("Booking", bookingSchema);
+const Booking = mongoose.model("Booking", bookingSchema);
+
+export default Booking;
