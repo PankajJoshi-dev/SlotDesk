@@ -119,7 +119,7 @@ const editFacility = asyncHandler(async (req, res) => {
     facilityId,
     req.validatedBody,
     {
-      new: true,
+      returnDocument: true,
       runValidators: true,
     },
   );
