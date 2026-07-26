@@ -55,10 +55,18 @@ const facilitySchema = z.object({
     error: "Facility type is required.",
   }),
 
-  location: z
-    .string({ error: "Location is required." })
-    .trim()
-    .min(2, "Location must be at least 2 characters."),
+  address: z.object(
+    {
+      city: z
+        .string({ error: "City is required." })
+        .trim()
+        .regex(
+          /^[A-Za-z]+(?: [A-Za-z]+)*$/,
+          "City name must contain only letters and spaces.",
+        ),
+    },
+    { error: "Address is required." },
+  ),
 
   capacity: z.coerce
     .number({ error: "Capacity is required." })
@@ -89,7 +97,12 @@ const facilitySchema = z.object({
 
   closedDates: z.array(dateSchema).default([]),
 
-  isActive: z.coerce.boolean().default(true).optional(),
+  isActive: z.preprocess((value) => {
+    if (value === undefined || value === "") return undefined;
+    if (value === "true") return true;
+    if (value === "false") return false;
+    return value;
+  }, z.boolean().default(true)),
 });
 
 const createFacilitySchema = facilitySchema.refine(
@@ -124,10 +137,19 @@ const editFacilitySchema = facilitySchema
 const filterFacilitiesSchema = z.object({
   facilityType: z.enum(FACILITY_TYPES).optional(),
 
-  location: z
-    .string()
-    .trim()
-    .min(2, "Location must be at least 2 characters.")
+  address: z
+    .object(
+      {
+        city: z
+          .string({ error: "City is required." })
+          .trim()
+          .regex(
+            /^[A-Za-z]+(?: [A-Za-z]+)*$/,
+            "City name must contain only letters and spaces.",
+          ),
+      },
+      { error: "Address is required." },
+    )
     .optional(),
 });
 

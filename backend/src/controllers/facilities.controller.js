@@ -6,18 +6,11 @@ import User from "../models/user.model.js";
 import Booking from "../models/booking.model.js";
 
 const createFacility = asyncHandler(async (req, res) => {
-  if (req.user.role !== "admin") {
-    throw new ApiError(
-      403,
-      "Access denied. Only admins can create facilities.",
-    );
-  }
-
-  const { ownerEmail, ...facilityData } = req.validatedBody;
+  const { ...facilityData } = req.validatedBody;
 
   const existingFacility = await Facility.findOne({
     name: facilityData.name,
-    location: facilityData.location,
+    address: facilityData.address,
   });
 
   if (existingFacility) {
@@ -27,22 +20,29 @@ const createFacility = asyncHandler(async (req, res) => {
     );
   }
 
-  const owner = await User.findOne({ email: ownerEmail });
-
-  if (!owner) {
-    throw new ApiError(404, "No facility owner found for the provided email.");
+  if (
+    (!req.user.roles.includes("user") &&
+      !req.user.roles.includes("facilityOwner")) ||
+    req.user.isAdmin
+  ) {
+    throw new ApiError(403, "Access denied. You can not create a facility.");
   }
 
-  if (owner.role !== "facilityOwner") {
-    throw new ApiError(
-      400,
-      "The selected user must have the facilityOwner role.",
-    );
-  }
-
-  facilityData.owner = owner._id;
+  facilityData.owner = req.user._id;
 
   const facility = await Facility.create(facilityData);
+
+  if (!req.user.roles.includes("facilityOwner")) {
+    await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $addToSet: {
+          roles: "facilityOwner",
+        },
+      },
+      { new: true },
+    );
+  }
 
   return res
     .status(201)
@@ -52,8 +52,8 @@ const createFacility = asyncHandler(async (req, res) => {
 const filterFacilities = asyncHandler(async (req, res) => {
   const filters = {};
 
-  if (req.validatedQuery.location) {
-    filters.location = req.validatedQuery.location;
+  if (req.validatedQuery.address?.city) {
+    filters["address.city"] = req.validatedQuery.address.city;
   }
 
   if (req.validatedQuery.facilityType) {
@@ -90,21 +90,18 @@ const editFacility = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Facility not found.");
   }
 
-  if (!targetFacility.owner.equals(req.user._id) && req.user.role !== "admin") {
-    throw new ApiError(
-      403,
-      "Only the facility owner or an admin can edit this facility.",
-    );
+  if (!targetFacility.owner.equals(req.user._id)) {
+    throw new ApiError(403, "Only the facility owner can edit this facility.");
   }
 
-  if (req.validatedBody.name || req.validatedBody.location) {
+  if (req.validatedBody.name || req.validatedBody.address) {
     const newName = req.validatedBody.name ?? targetFacility.name;
-    const newLocation = req.validatedBody.location ?? targetFacility.location;
+    const newAddress = req.validatedBody.address ?? targetFacility.address;
 
     const existingFacility = await Facility.findOne({
       name: newName,
-      location: newLocation,
-      _id: { $ne: facilityId },
+      address: newAddress,
+      _id: { $ne: facilityId }, // Exclude current facility
     });
 
     if (existingFacility) {
@@ -119,7 +116,7 @@ const editFacility = asyncHandler(async (req, res) => {
     facilityId,
     req.validatedBody,
     {
-      returnDocument: true,
+      returnDocument: "after",
       runValidators: true,
     },
   );
@@ -140,10 +137,10 @@ const deleteFacility = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Facility not found.");
   }
 
-  if (!targetFacility.owner.equals(req.user._id) && req.user.role !== "admin") {
+  if (!targetFacility.owner.equals(req.user._id)) {
     throw new ApiError(
       403,
-      "Only the facility owner or an admin can delete this facility.",
+      "Only the facility owner can delete this facility.",
     );
   }
 
@@ -163,8 +160,6 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
   if (!facility) {
     throw new ApiError(404, "Facility not found.");
   }
-
-  console.log(facility);
 
   const totalSlots = Math.floor(
     (facility.closingTime - facility.openingTime) / facility.slotDuration,
