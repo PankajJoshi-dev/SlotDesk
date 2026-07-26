@@ -17,8 +17,12 @@ function buildBookingFilters(validatedQuery) {
 }
 
 const createBooking = asyncHandler(async (req, res) => {
-  if (req.user.role !== "user") {
-    throw new ApiError(403, "Access denied. Only users can make bookings.");
+  if (
+    (!req.user.roles.includes("user") &&
+      !req.user.roles.includes("facilityOwner")) ||
+    req.user.isAdmin
+  ) {
+    throw new ApiError(403, "Access denied.");
   }
 
   const facility = await Facility.findById(req.validatedParams.facilityId);
@@ -57,7 +61,7 @@ const createBooking = asyncHandler(async (req, res) => {
     (minutesSinceMidnight - facility.openingTime) / facility.slotDuration,
   );
 
-  const today = now;
+  const today = new Date();
   today.setUTCHours(0, 0, 0, 0); // Midnight
   if (
     bookingInfo.date.getTime() === today.getTime() &&
@@ -101,7 +105,7 @@ const createBooking = asyncHandler(async (req, res) => {
 });
 
 const getAllBookings = asyncHandler(async (req, res) => {
-  if (req.user.role !== "admin") {
+  if (!req.user.isAdmin) {
     throw new ApiError(
       403,
       "Access denied. Only the admin can perform this action.",
@@ -144,20 +148,17 @@ const getFacilityBookings = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(
-        200,
-        bookings,
-        "Facilities' Bookings fetched successfully.",
-      ),
+      new ApiResponse(200, bookings, "Facility Bookings fetched successfully."),
     );
 });
 
 const getMyBookings = asyncHandler(async (req, res) => {
-  if (req.user.role !== "user") {
-    throw new ApiError(
-      403,
-      "Access denied. Only a user can perform this action.",
-    );
+  if (
+    (!req.user.roles.includes("user") &&
+      !req.user.roles.includes("facilityOwner")) ||
+    req.user.isAdmin
+  ) {
+    throw new ApiError(403, "Access denied.");
   }
 
   const filters = buildBookingFilters(req.validatedQuery);
@@ -184,11 +185,11 @@ const getSingleBooking = asyncHandler(async (req, res) => {
   }
 
   // Authority check
-  if (req.user.role === "user") {
-    if (!booking.user.equals(req.user._id)) {
-      throw new ApiError(403, "Access denied.");
-    }
-  } else if (req.user.role === "facilityOwner") {
+  if (req.user.isAdmin) {
+    // Allow
+  } else if (booking.user.equals(req.user._id)) {
+    // Allow (their own booking)
+  } else if (req.user.roles.includes("facilityOwner")) {
     const facility = await Facility.findById(booking.facility);
 
     if (!facility) {
@@ -198,6 +199,8 @@ const getSingleBooking = asyncHandler(async (req, res) => {
     if (!facility.owner.equals(req.user._id)) {
       throw new ApiError(403, "Access denied.");
     }
+  } else {
+    throw new ApiError(403, "Access denied.");
   }
 
   await booking.populate([
