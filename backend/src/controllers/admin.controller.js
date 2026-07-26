@@ -4,10 +4,9 @@ import ApiResponse from "../utils/ApiResponse.js";
 import User from "../models/user.model.js";
 import Facility from "../models/facility.model.js";
 import Booking from "../models/booking.model.js";
-import { email } from "zod";
 
 const getDashboard = asyncHandler(async (req, res) => {
-  if (req.user.role !== "admin") {
+  if (!req.user.isAdmin) {
     throw new ApiError(403, "Access denied.");
   }
 
@@ -18,8 +17,8 @@ const getDashboard = asyncHandler(async (req, res) => {
     activeFacilities,
     totalBookings,
   ] = await Promise.all([
-    User.countDocuments({ role: "user" }),
-    User.countDocuments({ role: "facilityOwner" }),
+    User.countDocuments({ roles: "user" }),
+    User.countDocuments({ roles: "facilityOwner" }),
     Facility.countDocuments(),
     Facility.countDocuments({ isActive: true }),
     Booking.countDocuments(),
@@ -41,16 +40,16 @@ const getDashboard = asyncHandler(async (req, res) => {
 });
 
 const getAllUsers = asyncHandler(async (req, res) => {
-  if (req.user.role !== "admin") {
+  if (!req.user.isAdmin) {
     throw new ApiError(403, "Access denied.");
   }
 
-  const { fullName, email, role } = req.validatedQuery;
+  const { fullName, email, roles } = req.validatedQuery;
 
   const filters = {};
   if (fullName) filters.fullName = fullName;
   if (email) filters.email = email;
-  if (role) filters.role = role;
+  if (roles) filters.roles = roles;
 
   const users = await User.find(filters).select("-password");
 
@@ -59,30 +58,4 @@ const getAllUsers = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, users, "Users fetched successfully."));
 });
 
-const changeUserRole = asyncHandler(async (req, res) => {
-  if (req.user.role !== "admin") {
-    throw new ApiError(403, "Access denied.");
-  }
-
-  const { userId } = req.validatedParams;
-  const { role } = req.validatedBody;
-
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { role: role },
-    {
-      returnDocument: true,
-      runValidators: true,
-    },
-  );
-
-  if (!user) {
-    throw new ApiError(404, "User not found.");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, user, "User role updated successfully."));
-});
-
-export { getDashboard, getAllUsers, changeUserRole };
+export { getDashboard, getAllUsers };

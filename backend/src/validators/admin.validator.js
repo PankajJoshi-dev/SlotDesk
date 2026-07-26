@@ -17,11 +17,7 @@ const getAllUsersSchema = z.object({
     .email("Invalid email format.")
     .optional(),
 
-  role: z.enum(["user", "facilityOwner", "admin"]).optional(),
+  roles: z.enum(["user", "facilityOwner"]).optional(),
 });
 
-const changeUserRoleSchema = z.object({
-  role: z.enum(["user", "facilityOwner", "admin"]),
-});
-
-export { getAllUsersSchema, changeUserRoleSchema };
+export { getAllUsersSchema };
