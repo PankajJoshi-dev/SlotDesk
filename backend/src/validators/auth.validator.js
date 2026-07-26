@@ -15,6 +15,18 @@ const registerSchema = z.object({
     .trim()
     .toLowerCase()
     .email("Invalid email format."),
+  address: z.object(
+    {
+      city: z
+        .string({ error: "City is required." })
+        .trim()
+        .regex(
+          /^[A-Za-z]+(?: [A-Za-z]+)*$/,
+          "City name must contain only letters and spaces.",
+        ),
+    },
+    { error: "Address is required." },
+  ),
   password: z
     .string({ error: "Password is required." })
     .trim()

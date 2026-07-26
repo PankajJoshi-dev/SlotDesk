@@ -11,7 +11,8 @@ const cookieOptions = {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { fullName, email, password, confirmPassword } = req.validatedBody;
+  const { fullName, email, address, password, confirmPassword } =
+    req.validatedBody;
 
   if (password !== confirmPassword) {
     throw new ApiError(400, "Passwords do not match.");
@@ -26,6 +27,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     fullName,
     email,
+    address,
     password,
   });
 
