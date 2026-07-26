@@ -24,10 +24,23 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
 
-    role: {
-      type: String,
-      enum: ["user", "facilityOwner", "admin"],
-      default: "user",
+    address: {
+      city: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+    },
+
+    roles: {
+      type: [String],
+      enum: ["user", "facilityOwner"],
+      default: ["user"],
+    },
+
+    isAdmin: {
+      type: Boolean,
+      default: false,
     },
   },
   {
