@@ -41,10 +41,12 @@ const facilitySchema = new mongoose.Schema(
       ],
     },
 
-    location: {
-      type: String,
-      required: true,
-      trim: true,
+    address: {
+      city: {
+        type: String,
+        required: true,
+        trim: true,
+      },
     },
 
     capacity: {
