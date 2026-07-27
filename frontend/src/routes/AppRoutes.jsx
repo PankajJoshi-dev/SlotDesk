@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import MainLayout from "../layouts/MainLayout";
+
 // Public
 import Landing from "../pages/public/Landing/Landing";
 import Login from "../pages/public/Login/Login";
@@ -30,34 +32,36 @@ export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ---------- Public ---------- */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route element={<MainLayout />}>
+          {/* ---------- Public ---------- */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* ---------- User ---------- */}
-        <Route path="/home" element={<Home />} />
-        <Route path="/facilities" element={<BrowseFacilities />} />
-        <Route path="/facilities/:facilityId" element={<FacilityDetails />} />
-        <Route path="/facilities/:facilityId/book" element={<BookSlot />} />
-        <Route path="/bookings" element={<MyBookings />} />
+          {/* ---------- User ---------- */}
+          <Route path="/home" element={<Home />} />
+          <Route path="/facilities" element={<BrowseFacilities />} />
+          <Route path="/facilities/:facilityId" element={<FacilityDetails />} />
+          <Route path="/facilities/:facilityId/book" element={<BookSlot />} />
+          <Route path="/bookings" element={<MyBookings />} />
 
-        {/* ---------- Owner ---------- */}
-        <Route path="/owner/dashboard" element={<OwnerDashboard />} />
-        <Route path="/owner/facilities" element={<MyFacilities />} />
-        <Route path="/owner/facilities/create" element={<CreateFacility />} />
-        <Route
-          path="/owner/facilities/:facilityId/bookings"
-          element={<FacilityBookings />}
-        />
+          {/* ---------- Owner ---------- */}
+          <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+          <Route path="/owner/facilities" element={<MyFacilities />} />
+          <Route path="/owner/facilities/create" element={<CreateFacility />} />
+          <Route
+            path="/owner/facilities/:facilityId/bookings"
+            element={<FacilityBookings />}
+          />
 
-        {/* ---------- Admin ---------- */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/users" element={<Users />} />
-        <Route path="/admin/facilities" element={<Facilities />} />
+          {/* ---------- Admin ---------- */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<Users />} />
+          <Route path="/admin/facilities" element={<Facilities />} />
 
-        {/* ---------- Catch All ---------- */}
-        <Route path="*" element={<Error />} />
+          {/* ---------- Catch All ---------- */}
+          <Route path="*" element={<Error />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
