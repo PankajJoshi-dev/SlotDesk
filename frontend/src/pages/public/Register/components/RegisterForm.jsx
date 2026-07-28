@@ -1,88 +1,189 @@
-import React from "react";
+import React, { useState } from "react";
+import { useAuth } from "../../../../contexts/AuthContext";
+import { toast } from "sonner";
 
 function RegisterForm() {
-  const handleSubmit = (e) => {
+  const { register, loading } = useAuth();
+
+  const [errors, setErrors] = useState({});
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    city: "",
+    pinCode: "",
+    state: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const inputClass = (field) =>
+    `border rounded p-2 transition-colors outline-none
+   focus:border-white/80
+   focus:ring-2
+   focus:ring-white/80
+   ${errors[field] ? "border-red-500" : "border-border"}`;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear the error for the field being edited
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted");
+
+    setErrors({});
+
+    if (formData.password !== formData.confirmPassword) {
+      setErrors({
+        confirmPassword: "Passwords do not match.",
+      });
+      return;
+    }
+
+    const { city, state, pinCode, ...rest } = formData;
+
+    const userData = {
+      ...rest,
+      address: {
+        city,
+        state,
+        pinCode,
+      },
+    };
+
+    try {
+      await register(userData);
+      toast.success("Welcome to SlotDesk!");
+    } catch (error) {
+      setErrors({
+        [error.response?.data?.field]:
+          error.response?.data?.message || "Something went wrong.",
+      });
+    }
   };
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      {/* Name */}
       <div className="flex flex-col w-80">
-        <label htmlFor="name" className="font-semibold text-sm">
+        <label htmlFor="fullName" className="font-semibold text-sm">
           Name
         </label>
+
         <input
           type="text"
-          id="name"
+          id="fullName"
           name="fullName"
-          className="border rounded p-2"
+          className={inputClass("fullName")}
           placeholder="Enter your name"
           autoComplete="name"
           required
+          value={formData.fullName}
+          onChange={handleChange}
         />
+
+        {errors.fullName && (
+          <p className="text-sm text-error">{errors.fullName}</p>
+        )}
       </div>
 
+      {/* Email */}
       <div className="flex flex-col w-80">
         <label htmlFor="email" className="font-semibold text-sm">
           Email
         </label>
+
         <input
           type="email"
           id="email"
           name="email"
-          className="border rounded p-2"
+          className={inputClass("email")}
           placeholder="Enter your email"
           autoComplete="email"
           required
+          value={formData.email}
+          onChange={handleChange}
         />
+
+        {errors.email && <p className="text-sm text-error">{errors.email}</p>}
       </div>
 
-      <div className="min-w-0 flex flex-row w-80 gap-2">
+      {/* Address */}
+      <div className="flex w-80 gap-2">
         <div className="flex flex-col gap-2 flex-1">
+          {/* City */}
           <div className="flex flex-col">
             <label htmlFor="city" className="font-semibold text-sm">
               City
             </label>
+
             <input
               type="text"
               id="city"
               name="city"
-              className="border rounded p-2 w-full"
+              className={inputClass("city")}
               placeholder="Enter your city"
               autoComplete="address-level2"
               required
+              value={formData.city}
+              onChange={handleChange}
             />
+
+            {errors.city && <p className="text-sm text-error">{errors.city}</p>}
           </div>
 
+          {/* PIN Code */}
           <div className="flex flex-col">
             <label htmlFor="pinCode" className="font-semibold text-sm">
               PIN Code
             </label>
+
             <input
               type="text"
               id="pinCode"
               name="pinCode"
-              className="border rounded p-2"
+              className={inputClass("pinCode")}
               placeholder="Enter your PIN Code"
-              maxLength={6}
+              autoComplete="postal-code"
               inputMode="numeric"
               pattern="[0-9]{6}"
+              maxLength={6}
               required
+              value={formData.pinCode}
+              onChange={handleChange}
             />
+
+            {errors.pinCode && (
+              <p className="text-sm text-error">{errors.pinCode}</p>
+            )}
           </div>
         </div>
 
-        <div className="min-w-0 flex flex-col flex-1">
+        {/* State */}
+        <div className="flex flex-col flex-1">
           <label htmlFor="state" className="font-semibold text-sm">
             State
           </label>
+
           <select
             id="state"
             name="state"
-            className="border rounded p-2 w-full"
+            className={inputClass("state")}
             autoComplete="address-level1"
             required
+            value={formData.state}
+            onChange={handleChange}
           >
             <option value="">Select State</option>
             <option value="Uttarakhand">Uttarakhand</option>
@@ -90,29 +191,63 @@ function RegisterForm() {
             <option value="Uttar Pradesh">Uttar Pradesh</option>
             <option value="Maharashtra">Maharashtra</option>
           </select>
+
+          {errors.state && <p className="text-sm text-error">{errors.state}</p>}
         </div>
       </div>
 
+      {/* Password */}
       <div className="flex flex-col w-80">
         <label htmlFor="password" className="font-semibold text-sm">
           Password
         </label>
+
         <input
           type="password"
           id="password"
           name="password"
-          className="border rounded p-2"
+          className={inputClass("password")}
           placeholder="Enter your password"
           autoComplete="new-password"
           required
+          value={formData.password}
+          onChange={handleChange}
         />
+
+        {errors.password && (
+          <p className="text-sm text-error">{errors.password}</p>
+        )}
+      </div>
+
+      {/* Confirm Password */}
+      <div className="flex flex-col w-80">
+        <label htmlFor="confirmPassword" className="font-semibold text-sm">
+          Confirm Password
+        </label>
+
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          className={inputClass("confirmPassword")}
+          placeholder="Confirm your password"
+          autoComplete="new-password"
+          required
+          value={formData.confirmPassword}
+          onChange={handleChange}
+        />
+
+        {errors.confirmPassword && (
+          <p className="text-sm text-error">{errors.confirmPassword}</p>
+        )}
       </div>
 
       <button
         type="submit"
-        className="bg-primary text-text rounded p-2 transition-colors hover:bg-primary-hover"
+        disabled={loading}
+        className="bg-primary text-text rounded p-2 transition-colors hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Create Account
+        {loading ? "Creating Account..." : "Create Account"}
       </button>
     </form>
   );
