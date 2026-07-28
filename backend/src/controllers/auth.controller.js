@@ -34,7 +34,10 @@ const registerUser = asyncHandler(async (req, res) => {
   const createdUser = user.toObject();
   delete createdUser.password;
 
+  const accessToken = generateAccessToken(user._id);
+
   return res
+    .cookie("accessToken", accessToken, cookieOptions)
     .status(201)
     .json(new ApiResponse(201, createdUser, "User registered successfully."));
 });
