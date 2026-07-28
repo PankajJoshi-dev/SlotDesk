@@ -9,6 +9,17 @@ import facilitiesRouter from "./routes/facilities.routes.js";
 import bookingRouter from "./routes/booking.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 
+import cors from "cors";
+
+const isProduction = process.env.NODE_ENV === "production";
+
+app.use(
+  cors({
+    origin: isProduction ? process.env.FRONTEND_URL : true,
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
