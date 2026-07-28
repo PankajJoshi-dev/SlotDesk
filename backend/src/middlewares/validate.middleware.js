@@ -5,8 +5,13 @@ export const validate = (schema, source = "body") => {
     const result = schema.safeParse(req[source]);
 
     if (!result.success) {
-      const message = result.error.issues[0].message;
-      return next(new apiError(400, message));
+      const issue = result.error.issues[0];
+
+      return res.status(400).json({
+        success: false,
+        field: issue.path[0],
+        message: issue.message,
+      });
     }
 
     if (source === "query") {
