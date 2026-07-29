@@ -151,6 +151,11 @@ const filterFacilitiesSchema = z.object({
       { error: "Address is required." },
     )
     .optional(),
+  search: z
+    .string({ error: "Search is required." })
+    .trim()
+    .max(100, "Search is too long.")
+    .optional(),
 });
 
 const getFacilitySlotsSchema = z.object({

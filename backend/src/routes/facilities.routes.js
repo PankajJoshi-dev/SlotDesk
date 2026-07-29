@@ -7,6 +7,8 @@ import {
   editFacility,
   deleteFacility,
   getFacilitySlots,
+  getAvailableTypes,
+  getAvailableLocations,
 } from "../controllers/facilities.controller.js";
 
 import { getFacilityBookings } from "../controllers/booking.controller.js";
@@ -28,6 +30,10 @@ facilitiesRouter
   .route("/")
   .post(verifyJWT, validate(createFacilitySchema), createFacility)
   .get(validate(filterFacilitiesSchema, "query"), filterFacilities);
+
+facilitiesRouter.route("/availableTypes").get(getAvailableTypes);
+
+facilitiesRouter.route("/availableLocations").get(getAvailableLocations);
 
 facilitiesRouter
   .route("/:facilityId")

@@ -50,14 +50,23 @@ const createFacility = asyncHandler(async (req, res) => {
 });
 
 const filterFacilities = asyncHandler(async (req, res) => {
+  const { search, facilityType, address } = req.validatedQuery;
+
   const filters = {};
 
-  if (req.validatedQuery.address?.city) {
-    filters["address.city"] = req.validatedQuery.address.city;
+  if (search) {
+    filters.name = {
+      $regex: search,
+      $options: "i",
+    };
   }
 
-  if (req.validatedQuery.facilityType) {
-    filters.facilityType = req.validatedQuery.facilityType;
+  if (address?.city) {
+    filters["address.city"] = address.city;
+  }
+
+  if (facilityType) {
+    filters.facilityType = facilityType;
   }
 
   const facilities = await Facility.find(filters);
@@ -196,6 +205,28 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
     );
 });
 
+const getAvailableTypes = asyncHandler(async (req, res) => {
+  const types = await Facility.distinct("facilityType", {
+    isActive: true,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, types, "Facility types fetched successfully"));
+});
+
+const getAvailableLocations = asyncHandler(async (req, res) => {
+  const cities = await Facility.distinct("address.city", {
+    isActive: true,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, cities, "Available locations fetched successfully"),
+    );
+});
+
 export {
   createFacility,
   filterFacilities,
@@ -203,4 +234,6 @@ export {
   editFacility,
   deleteFacility,
   getFacilitySlots,
+  getAvailableTypes,
+  getAvailableLocations,
 };
