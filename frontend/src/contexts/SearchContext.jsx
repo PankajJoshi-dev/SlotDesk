@@ -23,7 +23,6 @@ const SearchProvider = ({ children }) => {
       navigate("/facilities");
     } catch (err) {
       // Errors are handled globally
-      console.log(err.response);
     }
   }
 
