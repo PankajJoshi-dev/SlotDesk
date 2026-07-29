@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./contexts/AuthContext";
+import { SearchProvider } from "./contexts/SearchContext";
 import AppRoutes from "./routes/AppRoutes";
 
 function App() {
@@ -20,7 +21,9 @@ function App() {
 
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes />
+          <SearchProvider>
+            <AppRoutes />
+          </SearchProvider>
         </AuthProvider>
       </BrowserRouter>
     </>
