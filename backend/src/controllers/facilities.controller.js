@@ -79,7 +79,10 @@ const filterFacilities = asyncHandler(async (req, res) => {
 const getFacility = asyncHandler(async (req, res) => {
   const { facilityId } = req.validatedParams;
 
-  const facility = await Facility.findById(facilityId);
+  const facility = await Facility.findById(facilityId).populate({
+    path: "owner",
+    select: "fullName email",
+  });
 
   if (!facility) {
     throw new ApiError(404, "Facility not found.");
