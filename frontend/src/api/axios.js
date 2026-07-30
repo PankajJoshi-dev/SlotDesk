@@ -15,6 +15,7 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response.status;
     if (status === 400 || status === 401) {
+      console.log(error.response);
       return Promise.reject(error);
     }
 
