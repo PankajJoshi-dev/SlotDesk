@@ -3,6 +3,7 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SearchProvider } from "./contexts/SearchContext";
 import AppRoutes from "./routes/AppRoutes";
+import { FacilityProvider } from "./contexts/FacilityContext";
 
 function App() {
   return (
@@ -22,7 +23,9 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <SearchProvider>
-            <AppRoutes />
+            <FacilityProvider>
+              <AppRoutes />
+            </FacilityProvider>
           </SearchProvider>
         </AuthProvider>
       </BrowserRouter>
