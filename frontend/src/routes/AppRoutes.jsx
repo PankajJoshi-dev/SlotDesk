@@ -11,8 +11,7 @@ import Register from "../pages/public/Register/Register";
 // User
 import Home from "../pages/user/Home/Home";
 import BrowseFacilities from "../pages/user/BrowseFacilities/BrowseFacilities";
-import FacilityDetails from "../pages/user/FacilityDetails/FacilityDetails";
-import BookSlot from "../pages/user/BookSlot/BookSlot";
+import FacilityBooking from "../pages/user/FacilityBooking/FacilityBooking";
 import MyBookings from "../pages/user/MyBookings/MyBookings";
 
 // Owner
@@ -43,8 +42,7 @@ export default function AppRoutes() {
         {/* ---------- User ---------- */}
         <Route path="/home" element={<Home />} />
         <Route path="/facilities" element={<BrowseFacilities />} />
-        <Route path="/facilities/:facilityId" element={<FacilityDetails />} />
-        <Route path="/facilities/:facilityId/book" element={<BookSlot />} />
+        <Route path="/facilities/:facilityId" element={<FacilityBooking />} />
         <Route path="/bookings" element={<MyBookings />} />
 
         {/* ---------- Owner ---------- */}
