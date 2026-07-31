@@ -4,6 +4,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { SearchProvider } from "./contexts/SearchContext";
 import AppRoutes from "./routes/AppRoutes";
 import { FacilityProvider } from "./contexts/FacilityContext";
+import { BookingProvider } from "./contexts/BookingContext";
 
 function App() {
   return (
@@ -24,7 +25,9 @@ function App() {
         <AuthProvider>
           <SearchProvider>
             <FacilityProvider>
-              <AppRoutes />
+              <BookingProvider>
+                <AppRoutes />
+              </BookingProvider>
             </FacilityProvider>
           </SearchProvider>
         </AuthProvider>
