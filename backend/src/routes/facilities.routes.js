@@ -62,7 +62,6 @@ facilitiesRouter
 facilitiesRouter
   .route("/:facilityId/slots")
   .get(
-    verifyJWT,
     validate(objectIdParamsSchema("facilityId"), "params"),
     validate(getFacilitySlotsSchema, "query"),
     getFacilitySlots,

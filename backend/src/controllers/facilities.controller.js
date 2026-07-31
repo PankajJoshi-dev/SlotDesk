@@ -183,7 +183,7 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
     status: "BOOKED",
   });
 
-  const slots = {};
+  const slots = [];
   for (let i = 0; i < totalSlots; i++) {
     slots[i] = {
       remaining: facility.capacity,
