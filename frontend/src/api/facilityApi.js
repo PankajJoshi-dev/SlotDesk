@@ -13,4 +13,14 @@ const facilityDetailsRequest = async (facilityId) => {
   return response.data;
 };
 
-export { facilityDetailsRequest };
+const geteSlotsRequest = async (facilityId, date) => {
+  const response = await api.get(`/facilities/${facilityId}/slots`, {
+    params: {
+      date: date,
+    },
+  });
+  log(response.data);
+  return response.data;
+};
+
+export { facilityDetailsRequest, geteSlotsRequest };

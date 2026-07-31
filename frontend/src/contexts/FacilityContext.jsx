@@ -1,15 +1,24 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { facilityDetailsRequest } from "../api/facilityApi";
+import { facilityDetailsRequest, geteSlotsRequest } from "../api/facilityApi";
 
 const FacilityContext = createContext();
 
 const FacilityProvider = ({ children }) => {
   const [facilityDetails, setFacilityDetails] = useState(null);
 
+  const [slots, setSlots] = useState([]);
+
   async function getFacilityDetails(facilityId) {
     try {
       const res = await facilityDetailsRequest(facilityId);
       setFacilityDetails(res.data);
+    } catch (error) {}
+  }
+
+  async function getFacilitySlots(facilityId, date) {
+    try {
+      const res = await geteSlotsRequest(facilityId, date);
+      setSlots(res.data);
     } catch (error) {}
   }
 
@@ -19,6 +28,9 @@ const FacilityProvider = ({ children }) => {
         facilityDetails,
         setFacilityDetails,
         getFacilityDetails,
+        slots,
+        setSlots,
+        getFacilitySlots,
       }}
     >
       {children}
