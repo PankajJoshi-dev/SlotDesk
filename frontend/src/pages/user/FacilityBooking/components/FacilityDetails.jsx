@@ -5,13 +5,13 @@ import InfoCard from "./InfoCard.jsx";
 
 function FacilityDetails() {
   const { facilityId } = useParams();
-  const { facilityDetails, getFacilityDetails } = useFacility();
+  const { facilityDetails, getFacilityDetails, loading } = useFacility();
 
   useEffect(() => {
     getFacilityDetails(facilityId);
   }, [facilityId]);
 
-  if (!facilityDetails) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-[70vh]">
         Loading...
@@ -25,34 +25,34 @@ function FacilityDetails() {
         <div>
           <img
             src={facilityDetails?.imageUrl}
-            alt={facilityDetails.name}
+            alt={facilityDetails?.name}
             className="w-full aspect-video object-cover rounded-xl shadow-lg bg-primary/20"
           />
         </div>
 
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold">{facilityDetails.name}</h1>
+            <h1 className="text-3xl font-bold">{facilityDetails?.name}</h1>
 
             <p className="text-muted-foreground mt-1">
-              {facilityDetails.address?.city}
+              {facilityDetails?.address?.city}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <InfoCard
               title="Status"
-              value={facilityDetails.isActive ? "Active" : "Inactive"}
+              value={facilityDetails?.isActive ? "Active" : "Inactive"}
             />
 
             <InfoCard
               title="Capacity"
-              value={`${facilityDetails.capacity} people`}
+              value={`${facilityDetails?.capacity} people`}
             />
 
-            <InfoCard title="Opens" value={facilityDetails.openingTime} />
+            <InfoCard title="Opens" value={facilityDetails?.openingTime} />
 
-            <InfoCard title="Closes" value={facilityDetails.closingTime} />
+            <InfoCard title="Closes" value={facilityDetails?.closingTime} />
           </div>
 
           <div className="bg-card rounded-xl p-5 border">
@@ -61,12 +61,12 @@ function FacilityDetails() {
             <div className="space-y-2">
               <p>
                 <span className="font-medium">Name:</span>{" "}
-                {facilityDetails.owner?.fullName}
+                {facilityDetails?.owner?.fullName}
               </p>
 
               <p>
                 <span className="font-medium">Email:</span>{" "}
-                {facilityDetails.owner?.email}
+                {facilityDetails?.owner?.email}
               </p>
             </div>
           </div>
