@@ -10,10 +10,10 @@ const bookingCreationSchema = z.object({
 
   slotIndex: z.coerce
     .number({
-      error: "Slot index is required.",
+      error: "Please select a slot.",
     })
     .int()
-    .min(0, "Slot index cannot be negative."),
+    .min(0, "Invalid Slot selected."),
 
   partySize: z.coerce
     .number({
