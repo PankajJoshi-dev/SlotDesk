@@ -8,18 +8,28 @@ const FacilityProvider = ({ children }) => {
 
   const [slots, setSlots] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+
   async function getFacilityDetails(facilityId) {
+    setLoading(true);
+
     try {
       const res = await facilityDetailsRequest(facilityId);
       setFacilityDetails(res.data);
-    } catch (error) {}
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function getFacilitySlots(facilityId, date) {
+    setLoading(true);
+
     try {
       const res = await geteSlotsRequest(facilityId, date);
       setSlots(res.data);
-    } catch (error) {}
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -31,6 +41,8 @@ const FacilityProvider = ({ children }) => {
         slots,
         setSlots,
         getFacilitySlots,
+        loading,
+        setLoading,
       }}
     >
       {children}
