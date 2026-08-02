@@ -2,7 +2,7 @@ import React from "react";
 import { useBooking } from "../../../../contexts/BookingContext";
 
 function PartySize() {
-  const { partySize, setPartySize } = useBooking();
+  const { partySize, setPartySize, errors } = useBooking();
 
   return (
     <div className="flex flex-col space-y-2">
@@ -14,7 +14,7 @@ function PartySize() {
         type="number"
         id="partySize"
         name="partySize"
-        className="w-24 border rounded p-2 transition-colors outline-none focus:border-white/80 focus:ring-2 focus:ring-white/80"
+        className={`w-24 border rounded p-2 transition-colors outline-none focus:border-white/80 focus:ring-2 focus:ring-white/80 ${errors?.partySize ? "border-red-500" : "border-border"}`}
         placeholder="Party Size"
         inputMode="numeric"
         max={9999}
@@ -23,6 +23,10 @@ function PartySize() {
         value={partySize}
         onChange={(e) => setPartySize(Number(e.target.value) || 0)}
       />
+
+      {errors?.partySize && (
+        <p className="text-sm text-error">{errors.partySize}</p>
+      )}
     </div>
   );
 }
