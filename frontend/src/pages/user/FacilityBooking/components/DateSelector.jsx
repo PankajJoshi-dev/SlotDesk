@@ -2,15 +2,15 @@ import React from "react";
 import { useBooking } from "../../../../contexts/BookingContext";
 
 function DateSelector() {
-  const { bookingDate, setBookingDate } = useBooking();
+  const { bookingDate, setBookingDate, errors } = useBooking();
 
   const dates = [];
 
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setUTCHours(0, 0, 0, 0);
 
-  // Generates 9 next dates from today
-  for (let i = 0; i < 10; i++) {
+  // Generates 6 next dates from today
+  for (let i = 0; i < 7; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
     dates.push(date);
@@ -33,19 +33,31 @@ function DateSelector() {
       <button
         key={date.toISOString()}
         onClick={() => setBookingDate(date)}
-        className={`shrink-0 rounded-xl border p-3 transition-all cursor-pointer ${isSelected ? "bg-primary/20 border-primary" : "bg-card hover:bg-card/80"}`}
+        className={`shrink-0 rounded-xl border p-3 transition-all cursor-pointer
+  ${
+    isSelected
+      ? errors?.date
+        ? "border-red-500 bg-red-500"
+        : "bg-primary/20 text-primary-foreground border-primary"
+      : "bg-card hover:bg-card/80 border-border"
+  }`}
       >
         <p className="text-xs font-semibold">{day}</p>
-        <p className="mt-1 text-lg font-bold">{monthDay}</p>
+        <p className="mt-1 text-xs font-bold">{monthDay}</p>
       </button>
     );
   });
 
   return (
-    <>
-      <h1 className="text-2xl font-bold">Select Date</h1>
-      <div className="w-full grid grid-cols-5 gap-2">{dateCard}</div>
-    </>
+    <div className="space-y-2">
+      <h1 className="text-xl font-bold">Select Date</h1>
+
+      <div className="w-full grid grid-cols-4 lg:grid-cols-7 gap-2">
+        {dateCard}
+      </div>
+
+      {errors?.date && <p className="text-sm text-error">{errors.date}</p>}
+    </div>
   );
 }
 
