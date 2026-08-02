@@ -7,28 +7,50 @@ const BookingContext = createContext();
 const BookingProvider = ({ children }) => {
   const { facilityDetails, getFacilitySlots } = useFacility();
   const [bookingDate, setBookingDate] = useState();
-  const [slotIndex, setSlotIndex] = useState(0);
-  const [partySize, setPartySize] = useState(0);
+  const [slotIndex, setSlotIndex] = useState();
+  const [partySize, setPartySize] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
+  // Initialize
   useEffect(() => {
     if (!facilityDetails?._id) return;
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setUTCHours(0, 0, 0, 0);
 
     setBookingDate(today);
-    getFacilitySlots(facilityDetails._id, today);
-    setSlotIndex(0);
-    setPartySize(0);
+    setSlotIndex(undefined);
+    setPartySize(1);
+    setErrors({});
   }, [facilityDetails?._id]);
 
+  // Fetch slots
   useEffect(() => {
-    getFacilitySlots(facilityDetails?._id, bookingDate);
-  }, [bookingDate]);
+    if (!facilityDetails?._id || !bookingDate) return;
+
+    const fetchSlots = async () => {
+      setLoading(true);
+
+      try {
+        await getFacilitySlots(facilityDetails._id, bookingDate);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSlots();
+  }, [facilityDetails?._id, bookingDate]);
+
+  // Clear errors
+  useEffect(() => {
+    setErrors((prev) => ({
+      ...prev,
+      date: "",
+      partySize: "",
+      slotIndex: "",
+    }));
+  }, [bookingDate, partySize, slotIndex]);
 
   async function bookFacility() {
     const bookingData = {
@@ -37,11 +59,11 @@ const BookingProvider = ({ children }) => {
       partySize: partySize,
     };
 
-    {
-      try {
-        const res = await bookingRequest(facilityDetails?._id, bookingData);
-        setSlots(res.data);
-      } catch (error) {}
+    setLoading(true);
+    try {
+      await bookingRequest(facilityDetails?._id, bookingData);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -56,6 +78,8 @@ const BookingProvider = ({ children }) => {
         setPartySize,
         setSlotIndex,
         setLoading,
+        errors,
+        setErrors,
         bookFacility,
       }}
     >
