@@ -38,7 +38,11 @@ const createBooking = asyncHandler(async (req, res) => {
   };
 
   if (bookingInfo.partySize > facility.capacity) {
-    throw new ApiError(400, "Party size exceeds facility capacity.");
+    throw new ApiError(
+      400,
+      "partySize",
+      "Party size exceeds facility capacity.",
+    );
   }
 
   const totalSlots = Math.floor(
@@ -48,6 +52,7 @@ const createBooking = asyncHandler(async (req, res) => {
   if (bookingInfo.slotIndex < 0 || bookingInfo.slotIndex >= totalSlots) {
     throw new ApiError(
       400,
+      "slotIndex",
       "Can not book this slot. The selected slot is not available in this facility.",
     );
   }
@@ -55,7 +60,7 @@ const createBooking = asyncHandler(async (req, res) => {
   // Resolving Same day expired slot booking bug
   const now = new Date();
 
-  const minutesSinceMidnight = now.getUTCHours() * 60 + now.getUTCMinutes();
+  const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
 
   const currentPossibleSlot = Math.floor(
     (minutesSinceMidnight - facility.openingTime) / facility.slotDuration,
@@ -63,12 +68,13 @@ const createBooking = asyncHandler(async (req, res) => {
 
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0); // Midnight
+
   if (
     bookingInfo.date.getTime() === today.getTime() &&
     currentPossibleSlot >= bookingInfo.slotIndex
   ) {
     // Midnight timestamp match means same day
-    throw new ApiError(400, "Slot expired.");
+    throw new ApiError(409, "slotIndex", "Slot expired.");
   }
 
   const slotBookings = await Booking.find({
@@ -84,12 +90,16 @@ const createBooking = asyncHandler(async (req, res) => {
   );
 
   if (bookedCapacity + bookingInfo.partySize > facility.capacity) {
-    throw new ApiError(400, "This selected slot is full.");
+    throw new ApiError(400, "slotIndex", "This selected slot is full.");
   }
 
   for (const booking of slotBookings) {
     if (booking.user.equals(req.user._id)) {
-      throw new ApiError(400, "You have already booked this slot.");
+      throw new ApiError(
+        400,
+        "slotIndex",
+        "You have already booked this slot.",
+      );
     }
   }
 

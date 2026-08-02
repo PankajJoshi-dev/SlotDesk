@@ -15,7 +15,7 @@ const registerUser = asyncHandler(async (req, res) => {
     req.validatedBody;
 
   if (password !== confirmPassword) {
-    throw new ApiError(400, "Passwords do not match.");
+    throw new ApiError(400, "password", "Passwords do not match.");
   }
 
   const existingUser = await User.findOne({ email });

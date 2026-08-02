@@ -6,14 +6,14 @@ const verifyJWT = async (req, res, next) => {
   try {
     const token = req.cookies.accessToken;
     if (!token) {
-      throw new ApiError(401, "No Access Token.");
+      throw new ApiError(401, "accessToken", "No Access Token.");
     }
 
     const userId = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET).id;
 
     req.user = await User.findById(userId).select("-password");
     if (!userId || !req.user) {
-      throw new ApiError(401, "Invalid access token.");
+      throw new ApiError(401, "accessToken", "Invalid access token.");
     }
     next();
   } catch (error) {
@@ -22,7 +22,7 @@ const verifyJWT = async (req, res, next) => {
       throw error;
     }
 
-    throw new ApiError(401, "Invalid or expired access token.");
+    throw new ApiError(401, "accessToken", "Invalid or expired access token.");
   }
 };
 
