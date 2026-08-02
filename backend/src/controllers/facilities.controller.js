@@ -183,18 +183,36 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
     status: "BOOKED",
   });
 
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  // Compare with today's midnight timestamp
+  const isToday = date.getTime() === today.getTime();
+
+  const now = new Date();
+
+  const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
+
+  const currentPossibleSlot = Math.floor(
+    (minutesSinceMidnight - facility.openingTime) / facility.slotDuration,
+  );
+
   const slots = [];
   for (let i = 0; i < totalSlots; i++) {
+    const timeStamp = new Date(now).getTime();
     slots[i] = {
       remaining: facility.capacity,
-      available: true,
+      isAvailable: isToday ? i > currentPossibleSlot : true,
     };
   }
 
   for (const booking of bookings) {
     slots[booking.slotIndex].remaining =
       slots[booking.slotIndex].remaining - booking.partySize;
-    slots[booking.slotIndex].available = slots[booking.slotIndex].remaining > 0;
+
+    slots[booking.slotIndex].isAvailable =
+      slots[booking.slotIndex].isAvailable &&
+      slots[booking.slotIndex].remaining > 0;
   }
 
   return res
