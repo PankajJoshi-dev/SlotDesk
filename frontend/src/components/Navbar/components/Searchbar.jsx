@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useSearch } from "../../../contexts/SearchContext";
+import { useNavigate } from "react-router-dom";
 
 function SearchBar() {
+  const navigate = useNavigate();
+
   const { filters, setFilters } = useSearch();
   const [keyWord, setKeyWord] = useState(filters.search ?? "");
 
@@ -14,6 +17,8 @@ function SearchBar() {
       ...prev,
       search: keyWord,
     }));
+
+    navigate("/facilities");
   };
 
   return (

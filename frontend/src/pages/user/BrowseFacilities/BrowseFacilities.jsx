@@ -4,7 +4,15 @@ import FilterSection from "./components/FilterSection";
 import FacilityCard from "./components/FacilityCard";
 
 function BrowseFacilities() {
-  const { facilities } = useSearch();
+  const { facilities, loading } = useSearch();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[70vh]">
+        Loading...
+      </div>
+    );
+  }
 
   const facilityCards = facilities.map((facility) => (
     <FacilityCard key={facility._id} facility={facility} />

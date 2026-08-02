@@ -5,24 +5,23 @@ import {
   getAvailableLocations,
 } from "../api/searchApi";
 
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const SearchContext = createContext();
 
 const SearchProvider = ({ children }) => {
-  const navigate = useNavigate();
-
   const [filters, setFilters] = useState({});
   const [facilities, setFacilities] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   async function fetchFacilities() {
+    setLoading(true);
+
     try {
       const res = await filterFacilitiesRequest(filters);
       setFacilities(res.data);
-      navigate("/facilities");
-    } catch (err) {
-      // Errors are handled globally
+    } finally {
+      setLoading(false);
     }
   }
 
