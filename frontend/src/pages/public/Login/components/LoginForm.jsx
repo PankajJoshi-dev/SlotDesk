@@ -41,7 +41,7 @@ function LoginForm() {
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       {/* Email */}
       <div className="flex flex-col w-80">
-        <label htmlFor="email" className="font-semibold text-sm">
+        <label htmlFor="email" className="font-semibold text-xs text-text">
           Email
         </label>
 
@@ -49,7 +49,7 @@ function LoginForm() {
           type="email"
           id="email"
           name="email"
-          className={`border rounded p-2 transition-colors outline-none focus:border-white/80 focus:ring-2 focus:ring-white/80 ${formError ? "border-red-500" : "border-border"}`}
+          className={`border rounded p-2 transition-colors outline-none focus:border-white/80 focus:ring-1 focus:ring-white/80 text-text text-sm ${formError ? "border-red-500" : "border-border"}`}
           placeholder="Enter your email"
           autoComplete="email"
           required
@@ -60,7 +60,7 @@ function LoginForm() {
 
       {/* Password */}
       <div className="flex flex-col w-80">
-        <label htmlFor="password" className="font-semibold text-sm">
+        <label htmlFor="password" className="font-semibold text-xs text-text">
           Password
         </label>
 
@@ -68,7 +68,7 @@ function LoginForm() {
           type="password"
           id="password"
           name="password"
-          className={`border rounded p-2 transition-colors outline-none focus:border-white/80 focus:ring-2 focus:ring-white/80 ${formError ? "border-red-500" : "border-border"}`}
+          className={`border rounded p-2 transition-colors outline-none focus:border-white/80 focus:ring-2 focus:ring-white/80 text-text text-sm ${formError ? "border-red-500" : "border-border"}`}
           placeholder="Enter your password"
           autoComplete="current-password"
           required
@@ -85,7 +85,7 @@ function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="bg-primary text-text rounded p-2 transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+        className="bg-primary text-text text-sm rounded p-2 transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? "Logging in..." : "Login"}
       </button>

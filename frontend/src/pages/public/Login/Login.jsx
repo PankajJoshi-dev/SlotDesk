@@ -4,9 +4,9 @@ import LoginForm from "./components/LoginForm";
 
 function Login() {
   return (
-    <div className="min-h-[90%] flex flex-col justify-start items-center gap-4 pt-24">
-      <img src={favicon} alt="logo" className="h-16" />
-      <p className="text-text font-bold text-xl">Login to SlotDesk</p>
+    <div className="min-h-[90%] flex flex-col justify-start items-center gap-4 pt-12">
+      <img src={favicon} alt="logo" className="h-10" />
+      <p className="text-text font-semibold text-lg">Login to SlotDesk</p>
       <LoginForm />
     </div>
   );

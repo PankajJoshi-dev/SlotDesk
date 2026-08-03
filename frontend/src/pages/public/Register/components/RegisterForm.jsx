@@ -18,10 +18,10 @@ function RegisterForm() {
   });
 
   const inputClass = (field) =>
-    `border rounded p-2 transition-colors outline-none
+    `border rounded p-2 transition-all outline-none
    focus:border-white/80
-   focus:ring-2
-   focus:ring-white/80
+   focus:ring-1
+   focus:ring-white/80 text-text text-sm
    ${errors[field] ? "border-red-500" : "border-border"}`;
 
   const handleChange = (e) => {
@@ -77,7 +77,7 @@ function RegisterForm() {
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       {/* Name */}
       <div className="flex flex-col w-80">
-        <label htmlFor="fullName" className="font-semibold text-sm">
+        <label htmlFor="fullName" className="font-semibold text-xs text-text">
           Name
         </label>
 
@@ -100,7 +100,7 @@ function RegisterForm() {
 
       {/* Email */}
       <div className="flex flex-col w-80">
-        <label htmlFor="email" className="font-semibold text-sm">
+        <label htmlFor="email" className="font-semibold text-xs text-text">
           Email
         </label>
 
@@ -124,7 +124,7 @@ function RegisterForm() {
         <div className="flex flex-col gap-2 flex-1">
           {/* City */}
           <div className="flex flex-col">
-            <label htmlFor="city" className="font-semibold text-sm">
+            <label htmlFor="city" className="font-semibold text-xs text-text">
               City
             </label>
 
@@ -145,7 +145,10 @@ function RegisterForm() {
 
           {/* PIN Code */}
           <div className="flex flex-col">
-            <label htmlFor="pinCode" className="font-semibold text-sm">
+            <label
+              htmlFor="pinCode"
+              className="font-semibold text-xs text-text"
+            >
               PIN Code
             </label>
 
@@ -172,7 +175,7 @@ function RegisterForm() {
 
         {/* State */}
         <div className="flex flex-col flex-1">
-          <label htmlFor="state" className="font-semibold text-sm">
+          <label htmlFor="state" className="font-semibold text-xs text-text">
             State
           </label>
 
@@ -198,7 +201,7 @@ function RegisterForm() {
 
       {/* Password */}
       <div className="flex flex-col w-80">
-        <label htmlFor="password" className="font-semibold text-sm">
+        <label htmlFor="password" className="font-semibold text-xs text-text">
           Password
         </label>
 
@@ -221,7 +224,10 @@ function RegisterForm() {
 
       {/* Confirm Password */}
       <div className="flex flex-col w-80">
-        <label htmlFor="confirmPassword" className="font-semibold text-sm">
+        <label
+          htmlFor="confirmPassword"
+          className="font-semibold text-xs text-text"
+        >
           Confirm Password
         </label>
 
@@ -245,7 +251,7 @@ function RegisterForm() {
       <button
         type="submit"
         disabled={loading}
-        className="bg-primary text-text rounded p-2 transition-colors hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-primary text-text text-sm rounded p-2 transition-colors hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Creating Account..." : "Create Account"}
       </button>
