@@ -53,7 +53,7 @@ function SlotSelector() {
 
   return (
     <div className="space-y-2">
-      <h1 className="text-xl font-semibold">Select Slot</h1>
+      <h1 className="text-lg font-semibold">Select Slot</h1>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-2">
         {slotCards}

@@ -50,7 +50,7 @@ function DateSelector() {
 
   return (
     <div className="space-y-2">
-      <h1 className="text-xl font-bold">Select Date</h1>
+      <h1 className="text-lg font-bold">Select Date</h1>
 
       <div className="w-full grid grid-cols-4 lg:grid-cols-7 gap-2">
         {dateCard}
