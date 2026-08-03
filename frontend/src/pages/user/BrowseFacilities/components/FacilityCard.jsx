@@ -6,24 +6,26 @@ function FacilityCard({ facility }) {
 
   return (
     <div
-      className="flex gap-4 p-3 bg-card rounded-lg shadow-lg"
+      className="h-36 flex flex-row gap-4 p-3 bg-card rounded-lg shadow-lg hover:scale-[1.01] transition-all cursor-pointer"
       onClick={() => navigate(`/facilities/${facility._id}`)}
     >
       <img
         src={facility?.imageUrl}
         alt="Facility"
-        className=" w-36 aspect-square rounded-md object-cover shrink-0 bg-primary/20"
+        className="h-full aspect-square rounded-md object-cover shrink-0 bg-primary/20"
       />
 
-      <div className="flex-1 flex flex-col gap-2">
-        <h1 className="font-semibold text-xl">{facility?.name}</h1>
+      <div className="flex-1 min-w-0 flex flex-col">
+        <h1 className="text-lg font-semibold text-text line-clamp-2 warp-break">
+          {facility?.name}
+        </h1>
 
-        <p className="text-sm text-text-secondary">
+        <p className="mt-1 text-xs text-text-secondary truncate">
           {facility?.centerDistance || "2.4 km"} • {facility?.address?.city}
         </p>
 
-        <div className="flex-1 content-center">
-          <span className="self-start rounded-full bg-primary/20 px-2 py-1 text-sm">
+        <div className="mt-auto">
+          <span className="inline-flex rounded-full bg-primary/20 px-2 py-1 text-xs text-text">
             {facility?.facilityType}
           </span>
         </div>

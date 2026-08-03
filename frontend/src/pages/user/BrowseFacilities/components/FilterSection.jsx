@@ -31,7 +31,7 @@ function FilterSection() {
     <span
       key={type}
       onClick={() => handleClick(type)}
-      className="self-start rounded-full bg-primary/20 px-4 py-2 text-xl"
+      className="self-start rounded-full bg-primary/20 px-3 py-1 text-md text-text hover:bg-primary/30 hover:scale-102 transition-all"
     >
       {type}
     </span>
@@ -39,8 +39,10 @@ function FilterSection() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold m-4">Categories</h1>
-      <div className="flex flex-row justify-start gap-4 m-4">{typePills}</div>
+      <h1 className="text-lg font-semibold mx-4 mt-4">Categories</h1>
+      <div className="flex flex-row justify-start content-center gap-4 m-4 px-4">
+        {typePills}
+      </div>
     </div>
   );
 }
