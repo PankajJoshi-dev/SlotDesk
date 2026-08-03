@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import SearchBar from "./components/Searchbar";
 import { useSearch } from "../../../contexts/SearchContext";
 import FilterSection from "./components/FilterSection";
 import FacilityCard from "./components/FacilityCard";
@@ -20,9 +21,12 @@ function BrowseFacilities() {
 
   return (
     <>
+      <div className="flex flex-row justify-center items-center mt-4">
+        <SearchBar />
+      </div>
       <FilterSection />
-      <div className="flex flex-row justify-center scroll-auto"></div>
-      <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4 p-4">
+      <hr className="border-border" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-6 mx-4">
         {facilityCards}
       </div>
     </>
