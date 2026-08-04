@@ -105,14 +105,14 @@ const createBooking = asyncHandler(async (req, res) => {
   }
 
   const booking = await Booking.create(bookingInfo);
-  await booking.populate([
-    { path: "user", select: "fullName email" },
-    { path: "facility", select: "name" },
-  ]);
+
+  const populatedBooking = await Booking.findById(booking._id)
+    .populate("user", "fullName email")
+    .populate("facility", "name slotDuration address.city openingTime");
 
   return res
     .status(201)
-    .json(new ApiResponse(201, booking, "Slot booked successfully."));
+    .json(new ApiResponse(201, populatedBooking, "Slot booked successfully."));
 });
 
 const getAllBookings = asyncHandler(async (req, res) => {
@@ -127,7 +127,7 @@ const getAllBookings = asyncHandler(async (req, res) => {
 
   const bookings = await Booking.find(filters)
     .populate("user", "fullName email")
-    .populate("facility", "name");
+    .populate("facility", "name slotDuration address.city openingTime");
 
   return res
     .status(200)
@@ -154,7 +154,7 @@ const getFacilityBookings = asyncHandler(async (req, res) => {
 
   const bookings = await Booking.find(filters)
     .populate("user", "fullName email")
-    .populate("facility", "name");
+    .populate("facility", "name slotDuration address.city openingTime");
 
   return res
     .status(200)
