@@ -21,4 +21,10 @@ const getMyBookingsRequest = async (filters) => {
   return response.data;
 };
 
-export { bookingRequest, getMyBookingsRequest };
+const getSingleBookingRequest = async (bookingId) => {
+  const response = await api.get(`/bookings/${bookingId}`);
+  log(response.data);
+  return response.data;
+};
+
+export { bookingRequest, getMyBookingsRequest, getSingleBookingRequest };
