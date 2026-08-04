@@ -13,4 +13,12 @@ const bookingRequest = async (facilityId, bookingData) => {
   return response.data;
 };
 
-export { bookingRequest };
+const getMyBookingsRequest = async (filters) => {
+  const response = await api.get(`/bookings/me`, {
+    params: filters,
+  });
+  log(response.data);
+  return response.data;
+};
+
+export { bookingRequest, getMyBookingsRequest };
