@@ -10,9 +10,10 @@ function buildBookingFilters(validatedQuery) {
   if (validatedQuery.user) filters.user = validatedQuery.user;
   if (validatedQuery.facility) filters.facility = validatedQuery.facility;
   if (validatedQuery.date) filters.date = validatedQuery.date;
-  if (validatedQuery.slotIndex !== undefined)
+  if (validatedQuery.slotIndex !== undefined) {
     filters.slotIndex = validatedQuery.slotIndex;
-
+  }
+  if (validatedQuery.status) filters.status = validatedQuery.status;
   return filters;
 }
 
@@ -168,15 +169,15 @@ const getMyBookings = asyncHandler(async (req, res) => {
       !req.user.roles.includes("facilityOwner")) ||
     req.user.isAdmin
   ) {
-    throw new ApiError(403, "Access denied.");
+    throw new ApiError(403, "role", "Access denied.");
   }
 
-  const filters = buildBookingFilters(req.validatedQuery);
+  let filters = buildBookingFilters(req.validatedQuery);
   filters.user = req.user._id;
 
   const bookings = await Booking.find(filters)
     .populate("user", "fullName email")
-    .populate("facility", "name");
+    .populate("facility", "name slotDuration address.city openingTime");
 
   return res
     .status(200)
@@ -213,10 +214,9 @@ const getSingleBooking = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Access denied.");
   }
 
-  await booking.populate([
-    { path: "user", select: "fullName email" },
-    { path: "facility", select: "name" },
-  ]);
+  await booking
+    .populate("user", "fullName email")
+    .populate("facility", "name slotDuration address.city openingTime");
 
   return res
     .status(200)
