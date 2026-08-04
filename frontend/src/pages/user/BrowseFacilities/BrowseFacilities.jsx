@@ -25,7 +25,6 @@ function BrowseFacilities() {
         <SearchBar />
       </div>
       <FilterSection />
-      <hr className="border-border" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-6 mx-4">
         {facilityCards}
       </div>
