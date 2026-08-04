@@ -29,6 +29,8 @@ const BookingProvider = ({ children }) => {
   useEffect(() => {
     if (!facilityDetails?._id || !bookingDate) return;
 
+    setSlotIndex(undefined); // Unselect selected slot
+
     const fetchSlots = async () => {
       setLoading(true);
 

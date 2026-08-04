@@ -1,6 +1,7 @@
 import React from "react";
 import { useFacility } from "../../../../contexts/FacilityContext";
 import { useBooking } from "../../../../contexts/BookingContext";
+import formatTime from "../../../../utils/formatTIme";
 
 function SlotSelector() {
   const { facilityDetails, slots } = useFacility();
@@ -18,12 +19,6 @@ function SlotSelector() {
     const startTime = Number(
       facilityDetails?.openingTime + facilityDetails?.slotDuration * i,
     );
-
-    let hours = Math.floor(startTime / 60);
-    const mins = String(Math.floor(startTime % 60)).padStart(2, "0");
-
-    const period = hours >= 12 ? "PM" : "AM";
-    hours = String(hours % 12).padStart(2, "0");
 
     const isAvailable = slot.isAvailable;
 
@@ -46,7 +41,7 @@ function SlotSelector() {
   }
 `}
       >
-        {hours}:{mins} {period}
+        {formatTime(startTime)}
       </button>
     );
   });
