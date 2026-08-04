@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useFacility } from "../../../../contexts/FacilityContext";
-import InfoCard from "./InfoCard.jsx";
+import { MapPin } from "lucide-react";
+import formatTime from "../../../../utils/formatTIme";
 
 function FacilityDetails() {
   const { facilityId } = useParams();
@@ -13,62 +14,82 @@ function FacilityDetails() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[70vh]">
+      <div className="flex h-[70vh] items-center justify-center">
         Loading...
       </div>
     );
   }
 
   return (
-    <div className="w-full mx-auto p-6">
-      <div className="grid grid-cols-1 gap-4">
+    <div className="mx-auto w-full max-w-5xl px-4 py-5">
+      <div className="space-y-5">
+        <img
+          src={facilityDetails?.imageUrl}
+          alt={facilityDetails?.name}
+          className="h-64 w-full rounded-xl border object-cover bg-primary/20"
+        />
+
         <div>
-          <img
-            src={facilityDetails?.imageUrl}
-            alt={facilityDetails?.name}
-            className="w-full aspect-video object-cover rounded-xl shadow-lg bg-primary/20"
-          />
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold">{facilityDetails?.name}</h1>
-
-            <p className="text-muted-foreground mt-1">
+          <h1 className="text-xl font-semibold">{facilityDetails?.name}</h1>
+          <div className="flex flex-row gap-2 items-center content-center">
+            <MapPin className="h-4 w-4" />
+            <p className="mt-1 text-sm text-muted-foreground">
               {facilityDetails?.address?.city}
             </p>
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <InfoCard
-              title="Status"
-              value={facilityDetails?.isActive ? "Active" : "Inactive"}
-            />
-
-            <InfoCard
-              title="Capacity"
-              value={`${facilityDetails?.capacity} people`}
-            />
-
-            <InfoCard title="Opens" value={facilityDetails?.openingTime} />
-
-            <InfoCard title="Closes" value={facilityDetails?.closingTime} />
+        {/* Facility Details */}
+        <div className="rounded-xl border border-border/50 bg-card">
+          <div className="border-b px-4 py-3">
+            <h2 className="text-sm font-medium">Facility Details</h2>
           </div>
 
-          <div className="bg-card rounded-xl p-5 border">
-            <h2 className="font-semibold text-lg mb-3">Facility Owner</h2>
-
-            <div className="space-y-2">
-              <p>
-                <span className="font-medium">Name:</span>{" "}
-                {facilityDetails?.owner?.fullName}
-              </p>
-
-              <p>
-                <span className="font-medium">Email:</span>{" "}
-                {facilityDetails?.owner?.email}
-              </p>
+          <div className="divide-y text-sm">
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-muted-foreground">Status</span>
+              <span
+                className={`font-medium ${facilityDetails?.isActive ? "text-green-500" : "text-red-500"}`}
+              >
+                {facilityDetails?.isActive ? "Active" : "Inactive"}
+              </span>
             </div>
+
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-muted-foreground">Capacity</span>
+              <span className="font-medium">
+                {facilityDetails?.capacity} people
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-muted-foreground">Opens</span>
+              <span className="font-medium">
+                {formatTime(facilityDetails?.openingTime)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-muted-foreground">Closes</span>
+              <span className="font-medium">
+                {formatTime(facilityDetails?.closingTime)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Owner */}
+        <div className="rounded-xl border border-border/50 bg-card">
+          <div className="border-b px-4 py-3">
+            <h2 className="text-sm font-medium">Owner</h2>
+          </div>
+
+          <div className="space-y-1 px-4 py-4">
+            <p className="font-medium">{facilityDetails?.owner?.fullName}</p>
+
+            <p className="text-sm text-muted-foreground break-all">
+              {facilityDetails?.owner?.email}
+            </p>
           </div>
         </div>
       </div>
