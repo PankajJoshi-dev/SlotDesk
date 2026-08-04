@@ -27,6 +27,7 @@ import Facilities from "../pages/admin/Facilities/Facilities";
 
 // Errors
 import Error from "../pages/errors/Error";
+import BookingSuccess from "../pages/user/BookingSuccess/BookingSuccess";
 
 export default function AppRoutes() {
   return (
@@ -44,6 +45,7 @@ export default function AppRoutes() {
         <Route path="/facilities" element={<BrowseFacilities />} />
         <Route path="/facilities/:facilityId" element={<FacilityBooking />} />
         <Route path="/bookings" element={<MyBookings />} />
+        <Route path="/booking-success" element={<BookingSuccess />} />
 
         {/* ---------- Owner ---------- */}
         <Route path="/owner/dashboard" element={<OwnerDashboard />} />

@@ -1,10 +1,13 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useFacility } from "./FacilityContext";
 import { bookingRequest } from "../api/bookingApi";
+import { useNavigate } from "react-router-dom";
 
 const BookingContext = createContext();
 
 const BookingProvider = ({ children }) => {
+  const navigate = useNavigate();
+
   const { facilityDetails, getFacilitySlots } = useFacility();
   const [bookingDate, setBookingDate] = useState();
   const [slotIndex, setSlotIndex] = useState();
@@ -63,7 +66,17 @@ const BookingProvider = ({ children }) => {
 
     setLoading(true);
     try {
-      await bookingRequest(facilityDetails?._id, bookingData);
+      const res = await bookingRequest(facilityDetails?._id, bookingData);
+      if (res.success) {
+        const booking = res.data;
+        setTimeout(() => {
+          navigate(`/booking-success`, {
+            state: {
+              booking: booking,
+            },
+          });
+        }, 400);
+      }
     } finally {
       setLoading(false);
     }
