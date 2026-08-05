@@ -24,7 +24,7 @@ function BookingCard({ booking }) {
   const canCancel = booking?.status === "BOOKED";
 
   return (
-    <div className="rounded-2xl bg-card shadow-sm transition-all hover:shadow-md hover:scale-101">
+    <div className="w-full h-full rounded-2xl bg-card shadow-sm transition-all hover:shadow-md hover:scale-101">
       <div className="flex items-start justify-between gap-4 p-6 pb-4">
         <div>
           <h2 className="text-xl font-semibold text-foreground">
