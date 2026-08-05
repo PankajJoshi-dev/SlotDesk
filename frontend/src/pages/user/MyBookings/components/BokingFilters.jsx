@@ -4,16 +4,20 @@ import { useMyBooking } from "../../../../contexts/MyBookingContext";
 function BookingFilters() {
   const { filters, setFilters } = useMyBooking();
 
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
   const handleClick = (status) => {
     setFilters((prev) => ({
       ...prev,
       status: status,
+      date: undefined,
     }));
   };
 
   const filterClass = (status) =>
     `self-start shrink-0 rounded-full px-3 py-1 text-md text-text transition-all ${
-      filters.status === status
+      filters?.status === status
         ? "bg-primary"
         : "bg-primary/20 hover:bg-primary/30 hover:scale-102"
     }`;
@@ -22,10 +26,12 @@ function BookingFilters() {
     <div className="overflow-x-auto mx-4 p-4 border-b border-border">
       <div className="flex flex-row justify-start content-center gap-4">
         <span
-          onClick={() => handleClick(undefined)}
+          onClick={() =>
+            setFilters((prev) => ({ ...prev, status: undefined, date: today }))
+          }
           className={filterClass(undefined)}
         >
-          All
+          Today
         </span>
         <span
           onClick={() => handleClick("BOOKED")}
