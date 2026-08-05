@@ -4,7 +4,10 @@ import { getMyBookingsRequest } from "../api/bookingApi";
 const MyBookingContext = createContext();
 
 const MyBookingProvider = ({ children }) => {
-  const [filters, setFilters] = useState({});
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const [filters, setFilters] = useState({ date: today });
   const [mybookings, setMyBookings] = useState([]);
   const [loading, setLoading] = useState(false);
 
