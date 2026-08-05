@@ -1,11 +1,5 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import {
-  filterFacilitiesRequest,
-  getAvailableTypes,
-  getAvailableLocations,
-} from "../api/searchApi";
-
-import { toast } from "sonner";
+import { createContext, useContext, useState } from "react";
+import { filterFacilitiesRequest } from "../api/searchApi";
 
 const SearchContext = createContext();
 
@@ -25,14 +19,16 @@ const SearchProvider = ({ children }) => {
     }
   }
 
-  // Call fetchFacilities on mount
-  useEffect(() => {
-    fetchFacilities();
-  }, [filters]);
-
   return (
     <SearchContext.Provider
-      value={{ filters, setFilters, facilities, setFacilities }}
+      value={{
+        filters,
+        setFilters,
+        facilities,
+        setFacilities,
+        fetchFacilities,
+        loading,
+      }}
     >
       {children}
     </SearchContext.Provider>

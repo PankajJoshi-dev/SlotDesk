@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BookingCard from "./components/BookingCard";
 import { useMyBooking } from "../../../contexts/MyBookingContext";
 import BookingFilters from "./components/BokingFilters";
 
 function MyBookings() {
-  const { mybookings, loading } = useMyBooking();
+  const { mybookings, loading, getMyBookings } = useMyBooking();
+
+  // Fetch bookings on mount
+  useEffect(() => {
+    getMyBookings();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[70vh]">
+        Loading...
+      </div>
+    );
+  }
 
   const bookingCards = mybookings.map((booking) => {
     return <BookingCard key={booking?._id} booking={booking} />;
