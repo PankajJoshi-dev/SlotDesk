@@ -5,12 +5,12 @@ import FilterSection from "./components/FilterSection";
 import FacilityCard from "./components/FacilityCard";
 
 function BrowseFacilities() {
-  const { facilities, loading, fetchFacilities } = useSearch();
+  const { filters, facilities, loading, fetchFacilities } = useSearch();
 
-  // Fetch facilities on mount
+  // Fetch facilities whenever the filter changes
   useEffect(() => {
     fetchFacilities();
-  }, []);
+  }, [filters]);
 
   if (loading) {
     return (
