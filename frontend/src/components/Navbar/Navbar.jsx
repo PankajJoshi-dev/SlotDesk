@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { X, Menu } from "lucide-react";
 
 function Navbar() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, isLoggingOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -14,8 +14,12 @@ function Navbar() {
   const handleLogout = async () => {
     try {
       await logout();
-      toast.success("Logged out.");
       closeMenu();
+
+      // Navigte directly to landing page even if private
+      window.location.replace("/");
+
+      toast.success("Logged out.");
     } catch {
       // Error is handled by the Axios interceptor.
     }
@@ -29,8 +33,8 @@ function Navbar() {
     }`;
 
   return (
-    <nav className="fixed top-0 left-0 z-50 h-16 w-full bg-surface px-6 shadow-md">
-      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <nav className="fixed top-0 left-0 z-50 h-16 w-full bg-surface  shadow-md">
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 sm:px-8 lg:px-10">
         <NavLink to="/" className="flex items-center" onClick={closeMenu}>
           <img src={logo} alt="SlotDesk Logo" className="h-10 w-auto" />
         </NavLink>
@@ -40,7 +44,7 @@ function Navbar() {
             Browse
           </NavLink>
 
-          {!loading && user && (
+          {!loading && user && !user.isAdmin && (
             <NavLink to="/bookings" className={navLinkClass}>
               My Bookings
             </NavLink>
@@ -104,7 +108,7 @@ function Navbar() {
               Browse
             </NavLink>
 
-            {!loading && user && (
+            {!loading && user && !user.isAdmin && (
               <NavLink
                 to="/bookings"
                 className={navLinkClass}
@@ -136,6 +140,7 @@ function Navbar() {
               ) : (
                 <button
                   type="button"
+                  disabled={isLoggingOut}
                   onClick={handleLogout}
                   className="rounded-sm bg-primary px-3 py-2 text-sm transition-all hover:bg-primary-hover"
                 >

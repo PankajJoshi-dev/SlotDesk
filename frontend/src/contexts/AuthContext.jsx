@@ -10,6 +10,7 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   async function checkAuth() {
     setLoading(true);
@@ -52,7 +53,7 @@ const AuthProvider = ({ children }) => {
   }
 
   async function logout(authData) {
-    setLoading(true);
+    setIsLoggingOut(true);
 
     try {
       const res = await logoutRequest(authData);
@@ -60,12 +61,14 @@ const AuthProvider = ({ children }) => {
         setUser(null);
       }
     } finally {
-      setLoading(false);
+      setIsLoggingOut(false);
     }
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, logout, isLoggingOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
