@@ -27,4 +27,15 @@ const getSingleBookingRequest = async (bookingId) => {
   return response.data;
 };
 
-export { bookingRequest, getMyBookingsRequest, getSingleBookingRequest };
+const cancelBookingRequest = async (bookingId) => {
+  const response = await api.patch(`/bookings/${bookingId}`);
+  log(response.data);
+  return response.data;
+};
+
+export {
+  bookingRequest,
+  getMyBookingsRequest,
+  getSingleBookingRequest,
+  cancelBookingRequest,
+};

@@ -223,10 +223,32 @@ const getSingleBooking = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, booking, "Booking fetched successfully."));
 });
 
+const cancelBooking = asyncHandler(async (req, res) => {
+  const { bookingId } = req.validatedParams;
+
+  const booking = await Booking.findById(bookingId);
+
+  if (!booking) {
+    throw new ApiError(404, "Booking not found.");
+  }
+
+  if (!booking.user.equals(req.user._id)) {
+    throw new ApiError(403, "Access denied.");
+  }
+
+  booking.status = "CANCELLED";
+  await booking.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, booking, "Booking cancelled successfully."));
+});
+
 export {
   createBooking,
   getAllBookings,
   getFacilityBookings,
   getMyBookings,
   getSingleBooking,
+  cancelBooking,
 };

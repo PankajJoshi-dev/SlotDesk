@@ -5,6 +5,7 @@ import {
   getAllBookings,
   getMyBookings,
   getSingleBooking,
+  cancelBooking,
 } from "../controllers/booking.controller.js";
 
 import {
@@ -42,6 +43,11 @@ bookingRouter
     verifyJWT,
     validate(objectIdParamsSchema("bookingId"), "params"),
     getSingleBooking,
+  )
+  .patch(
+    verifyJWT,
+    validate(objectIdParamsSchema("bookingId"), "params"),
+    cancelBooking,
   );
 
 export default bookingRouter;
