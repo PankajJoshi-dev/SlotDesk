@@ -45,7 +45,7 @@ function FilterSection() {
   ));
 
   return (
-    <div className="overflow-x-auto mx-4 p-4 border-b border-border">
+    <div className="overflow-x-auto p-4 border-b border-border">
       <div className="flex flex-row justify-start content-center gap-4">
         {typePills}
       </div>
