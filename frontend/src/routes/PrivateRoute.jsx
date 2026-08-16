@@ -4,15 +4,11 @@ import { useAuth } from "../contexts/AuthContext";
 function PrivateRoute() {
   const { user, isAuthChecking, isLoggingOut } = useAuth();
 
-  if (isLoggingOut) {
+  if (isLoggingOut || isAuthChecking) {
     return null;
   }
 
-  return !isAuthChecking && !user ? (
-    <Navigate to="/login" replace />
-  ) : (
-    <Outlet />
-  );
+  return !user ? <Navigate to="/login" replace /> : <Outlet />;
 }
 
 export default PrivateRoute;

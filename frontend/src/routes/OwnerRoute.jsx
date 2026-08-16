@@ -2,9 +2,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 function OwnerRoute() {
-  const { user, loading } = useAuth();
+  const { user, isAuthChecking } = useAuth();
 
-  if (loading) {
+  if (isAuthChecking) {
     return null;
   }
 
