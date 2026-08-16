@@ -9,11 +9,12 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   async function checkAuth() {
-    setLoading(true);
+    setIsAuthChecking(true);
 
     try {
       const res = await getUserRequest();
@@ -21,7 +22,7 @@ const AuthProvider = ({ children }) => {
     } catch {
       setUser(null);
     } finally {
-      setLoading(false);
+      setIsAuthChecking(false);
     }
   }
 
@@ -67,7 +68,15 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, isLoggingOut }}
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        isLoggingOut,
+        isAuthChecking,
+      }}
     >
       {children}
     </AuthContext.Provider>
