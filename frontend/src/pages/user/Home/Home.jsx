@@ -1,31 +1,50 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useHome } from "../../../contexts/HomeContext";
+
+import { getMyBookingsRequest } from "../../../api/bookingApi";
 import formatDate from "../../../utils/formatDate";
+
 import NextBooking from "./components/NextBooking";
 import TodaySchedule from "./components/TodaySchedule";
 import UpcomingBookings from "./components/UpcomingBookings";
 
 function Home() {
   const { user } = useAuth();
-  const {
-    todayBookings,
-    getTodayBookings,
-    upcomingBookings,
-    getUpcomingBookings,
-  } = useHome();
+  const [todayBookings, setTodayBookings] = useState([]);
+  const [upcomingBookings, setUpcomingBookings] = useState([]);
+  const [isHomeReady, setIsHomeReady] = useState(false);
+
+  async function makeHomeReady(params) {
+    setIsHomeReady(false);
+
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    try {
+      let res = await getMyBookingsRequest({ date: today });
+      setTodayBookings(res.data);
+
+      res = await getMyBookingsRequest({ status: "BOOKED" });
+      setUpcomingBookings(res.data.slice(0, 6)); // Only show at most 6 bookings on HomePage
+    } finally {
+      setIsHomeReady(true);
+    }
+  }
 
   useEffect(() => {
-    getTodayBookings();
-    getUpcomingBookings();
+    makeHomeReady();
   }, []);
 
   const nextBooking = upcomingBookings[0];
 
   const hasAnyBookings =
     nextBooking || todayBookings.length > 0 || upcomingBookings.length > 0;
+
+  if (!isHomeReady) {
+    return null;
+  }
 
   return (
     <div className="min-h-full pb-12">
@@ -43,7 +62,7 @@ function Home() {
         </div>
 
         <div className="flex items-center gap-2 text-sm text-text-secondary">
-          <CalendarDays size={16} />
+          <CalendarDays size={16} className="text-primary" />
           <span>{formatDate(new Date())}</span>
         </div>
       </div>

@@ -53,7 +53,9 @@ function NextBooking({ booking }) {
     <div className="rounded-2xl border border-border-light bg-card p-6">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border-light pb-2">
-        <p className="text-sm font-semibold">Your next booking</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+          Your next booking
+        </p>
 
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
           <CalendarDays size={20} />
