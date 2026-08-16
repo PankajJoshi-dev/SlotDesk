@@ -1,18 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFacility } from "../../../../contexts/FacilityContext";
 import { useBooking } from "../../../../contexts/BookingContext";
 import formatTime from "../../../../utils/formatTIme";
 
 function SlotSelector() {
-  const { facilityDetails, slots } = useFacility();
-  const { slotIndex, setSlotIndex, errors, loading } = useBooking();
+  const { facilityDetails } = useFacility();
+
+  const {
+    facilityId,
+    bookingDate,
+    slotIndex,
+    setSlotIndex,
+    errors,
+    loading,
+    slots,
+    getFacilitySlots,
+  } = useBooking();
+
+  // Fetch slots
+  useEffect(() => {
+    if (!facilityId || !bookingDate) return;
+
+    setSlotIndex(undefined); // Unselect selected slot
+
+    const fetchSlots = async () => getFacilitySlots(facilityId, bookingDate);
+
+    fetchSlots();
+  }, [facilityId, bookingDate]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[70vh]">
-        Loading...
-      </div>
-    );
+    return <div className="flex justify-center items-center">Loading...</div>;
   }
 
   const slotCards = slots.map((slot, i) => {

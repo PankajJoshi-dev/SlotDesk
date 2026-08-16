@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useFacility } from "./FacilityContext";
 import { bookingRequest } from "../api/bookingApi";
+import { geteSlotsRequest } from "../api/facilityApi";
 import { useNavigate } from "react-router-dom";
 
 const BookingContext = createContext();
@@ -8,16 +8,19 @@ const BookingContext = createContext();
 const BookingProvider = ({ children }) => {
   const navigate = useNavigate();
 
-  const { facilityDetails, getFacilitySlots } = useFacility();
+  const [facilityId, setFacilityId] = useState("");
+
   const [bookingDate, setBookingDate] = useState();
   const [slotIndex, setSlotIndex] = useState();
   const [partySize, setPartySize] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [errors, setErrors] = useState({});
+  const [slots, setSlots] = useState([]);
 
   // Initialize
   useEffect(() => {
-    if (!facilityDetails?._id) return;
+    if (!facilityId) return;
 
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
@@ -26,26 +29,7 @@ const BookingProvider = ({ children }) => {
     setSlotIndex(undefined);
     setPartySize(1);
     setErrors({});
-  }, [facilityDetails?._id]);
-
-  // Fetch slots
-  useEffect(() => {
-    if (!facilityDetails?._id || !bookingDate) return;
-
-    setSlotIndex(undefined); // Unselect selected slot
-
-    const fetchSlots = async () => {
-      setLoading(true);
-
-      try {
-        await getFacilitySlots(facilityDetails._id, bookingDate);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSlots();
-  }, [facilityDetails?._id, bookingDate]);
+  }, [facilityId]);
 
   // Clear errors
   useEffect(() => {
@@ -64,9 +48,9 @@ const BookingProvider = ({ children }) => {
       partySize: partySize,
     };
 
-    setLoading(true);
+    setProcessing(true);
     try {
-      const res = await bookingRequest(facilityDetails?._id, bookingData);
+      const res = await bookingRequest(facilityId, bookingData);
       if (res.success) {
         const booking = res.data;
         setTimeout(() => {
@@ -78,6 +62,17 @@ const BookingProvider = ({ children }) => {
         }, 400);
       }
     } finally {
+      setProcessing(false);
+    }
+  }
+
+  async function getFacilitySlots(facilityId, date) {
+    setLoading(true);
+
+    try {
+      const res = await geteSlotsRequest(facilityId, date);
+      setSlots(res.data);
+    } finally {
       setLoading(false);
     }
   }
@@ -85,16 +80,20 @@ const BookingProvider = ({ children }) => {
   return (
     <BookingContext.Provider
       value={{
+        facilityId,
         bookingDate,
         slotIndex,
         partySize,
         loading,
+        setFacilityId,
         setBookingDate,
         setPartySize,
         setSlotIndex,
         setLoading,
         errors,
         setErrors,
+        slots,
+        getFacilitySlots,
         bookFacility,
       }}
     >

@@ -1,12 +1,10 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { facilityDetailsRequest, geteSlotsRequest } from "../api/facilityApi";
+import { createContext, useContext, useState } from "react";
+import { facilityDetailsRequest } from "../api/facilityApi";
 
 const FacilityContext = createContext();
 
 const FacilityProvider = ({ children }) => {
   const [facilityDetails, setFacilityDetails] = useState(null);
-
-  const [slots, setSlots] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -21,26 +19,12 @@ const FacilityProvider = ({ children }) => {
     }
   }
 
-  async function getFacilitySlots(facilityId, date) {
-    setLoading(true);
-
-    try {
-      const res = await geteSlotsRequest(facilityId, date);
-      setSlots(res.data);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <FacilityContext
       value={{
         facilityDetails,
         setFacilityDetails,
         getFacilityDetails,
-        slots,
-        setSlots,
-        getFacilitySlots,
         loading,
         setLoading,
       }}
