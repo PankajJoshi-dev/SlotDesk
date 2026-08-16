@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
-import { getMyBookingsRequest } from "../api/bookingApi";
+import { getMyBookingsRequest, cancelBookingRequest } from "../api/bookingApi";
+import { toast } from "sonner";
 
 const MyBookingContext = createContext();
 
@@ -7,7 +8,7 @@ const MyBookingProvider = ({ children }) => {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  const [filters, setFilters] = useState({ date: today });
+  const [filters, setFilters] = useState({ status: "BOOKED" });
   const [mybookings, setMyBookings] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -22,6 +23,21 @@ const MyBookingProvider = ({ children }) => {
     }
   }
 
+  async function cancelBooking(bookingId) {
+    setLoading(true);
+
+    try {
+      const res = await cancelBookingRequest(bookingId);
+
+      if (res.success) {
+        await getMyBookings();
+        toast.success("Booking Cancelled.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <MyBookingContext.Provider
       value={{
@@ -30,6 +46,7 @@ const MyBookingProvider = ({ children }) => {
         mybookings,
         loading,
         getMyBookings,
+        cancelBooking,
       }}
     >
       {children}
