@@ -20,28 +20,13 @@ const createFacility = asyncHandler(async (req, res) => {
     );
   }
 
-  if (
-    !req.user.roles.includes("user") &&
-    !req.user.roles.includes("facilityOwner")
-  ) {
-    throw new ApiError(403, "Access denied. You can not create a facility.");
-  }
-
   facilityData.owner = req.user._id;
 
   const facility = await Facility.create(facilityData);
 
-  if (!req.user.roles.includes("facilityOwner")) {
-    await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        $addToSet: {
-          roles: "facilityOwner",
-        },
-      },
-      { new: true },
-    );
-  }
+  await User.findByIdAndUpdate(req.user._id, {
+    $set: { isFacilityOwner: true },
+  });
 
   return res
     .status(201)
@@ -101,6 +86,10 @@ const editFacility = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Facility not found.");
   }
 
+  if (!req.user.isFacilityOwner) {
+    throw new ApiError(403, "Access denied. You are not a facility owner.");
+  }
+
   if (!targetFacility.owner.equals(req.user._id)) {
     throw new ApiError(403, "Only the facility owner can edit this facility.");
   }
@@ -148,6 +137,10 @@ const deleteFacility = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Facility not found.");
   }
 
+  if (!req.user.isFacilityOwner) {
+    throw new ApiError(403, "Access denied. You are not a facility owner.");
+  }
+
   if (!targetFacility.owner.equals(req.user._id)) {
     throw new ApiError(
       403,
@@ -156,6 +149,14 @@ const deleteFacility = asyncHandler(async (req, res) => {
   }
 
   await Facility.findByIdAndDelete(facilityId);
+
+  const hasRemainingFacilities = await Facility.exists({
+    owner: req.user._id,
+  });
+
+  await User.findByIdAndUpdate(req.user._id, {
+    $set: { isFacilityOwner: Boolean(hasRemainingFacilities) },
+  });
 
   return res
     .status(200)

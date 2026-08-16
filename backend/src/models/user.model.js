@@ -32,10 +32,9 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    roles: {
-      type: [String],
-      enum: ["user", "facilityOwner"],
-      default: ["user"],
+    isFacilityOwner: {
+      type: Boolean,
+      default: false,
     },
   },
   {
