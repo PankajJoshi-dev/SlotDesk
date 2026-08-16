@@ -19,9 +19,8 @@ function buildBookingFilters(validatedQuery) {
 
 const createBooking = asyncHandler(async (req, res) => {
   if (
-    (!req.user.roles.includes("user") &&
-      !req.user.roles.includes("facilityOwner")) ||
-    req.user.isAdmin
+    !req.user.roles.includes("user") &&
+    !req.user.roles.includes("facilityOwner")
   ) {
     throw new ApiError(403, "Access denied.");
   }
@@ -115,25 +114,6 @@ const createBooking = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, populatedBooking, "Slot booked successfully."));
 });
 
-const getAllBookings = asyncHandler(async (req, res) => {
-  if (!req.user.isAdmin) {
-    throw new ApiError(
-      403,
-      "Access denied. Only the admin can perform this action.",
-    );
-  }
-
-  const filters = buildBookingFilters(req.validatedQuery);
-
-  const bookings = await Booking.find(filters)
-    .populate("user", "fullName email")
-    .populate("facility", "name slotDuration address.city openingTime");
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, bookings, "Bookings fetched successfully."));
-});
-
 const getFacilityBookings = asyncHandler(async (req, res) => {
   const facility = await Facility.findById(req.validatedParams.facilityId);
 
@@ -165,9 +145,8 @@ const getFacilityBookings = asyncHandler(async (req, res) => {
 
 const getMyBookings = asyncHandler(async (req, res) => {
   if (
-    (!req.user.roles.includes("user") &&
-      !req.user.roles.includes("facilityOwner")) ||
-    req.user.isAdmin
+    !req.user.roles.includes("user") &&
+    !req.user.roles.includes("facilityOwner")
   ) {
     throw new ApiError(403, "role", "Access denied.");
   }
@@ -196,9 +175,7 @@ const getSingleBooking = asyncHandler(async (req, res) => {
   }
 
   // Authority check
-  if (req.user.isAdmin) {
-    // Allow
-  } else if (booking.user.equals(req.user._id)) {
+  if (booking.user.equals(req.user._id)) {
     // Allow (their own booking)
   } else if (req.user.roles.includes("facilityOwner")) {
     const facility = await Facility.findById(booking.facility);
@@ -246,7 +223,6 @@ const cancelBooking = asyncHandler(async (req, res) => {
 
 export {
   createBooking,
-  getAllBookings,
   getFacilityBookings,
   getMyBookings,
   getSingleBooking,

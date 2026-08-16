@@ -21,9 +21,8 @@ const createFacility = asyncHandler(async (req, res) => {
   }
 
   if (
-    (!req.user.roles.includes("user") &&
-      !req.user.roles.includes("facilityOwner")) ||
-    req.user.isAdmin
+    !req.user.roles.includes("user") &&
+    !req.user.roles.includes("facilityOwner")
   ) {
     throw new ApiError(403, "Access denied. You can not create a facility.");
   }

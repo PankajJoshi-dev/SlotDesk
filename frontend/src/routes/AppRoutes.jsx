@@ -19,9 +19,6 @@ import MyFacilities from "../pages/owner/MyFacilities/MyFacilities";
 import CreateFacility from "../pages/owner/CreateFacility/CreateFacility";
 import FacilityBookings from "../pages/owner/FacilityBookings/FacilityBookings";
 
-import AdminDashboard from "../pages/admin/Dashboard/Dashboard";
-import Users from "../pages/admin/Users/Users";
-
 import Error from "../pages/errors/Error";
 
 export default function AppRoutes() {
@@ -48,9 +45,6 @@ export default function AppRoutes() {
             path="/owner/facilities/:facilityId/bookings"
             element={<FacilityBookings />}
           />
-          {/* Admin */}
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<Users />} />
         </Route>
 
         <Route path="/facilities" element={<BrowseFacilities />} />

@@ -44,7 +44,7 @@ function Navbar() {
             Browse
           </NavLink>
 
-          {!loading && user && !user.isAdmin && (
+          {!loading && user && (
             <NavLink to="/bookings" className={navLinkClass}>
               My Bookings
             </NavLink>
@@ -108,7 +108,7 @@ function Navbar() {
               Browse
             </NavLink>
 
-            {!loading && user && !user.isAdmin && (
+            {!loading && user && (
               <NavLink
                 to="/bookings"
                 className={navLinkClass}

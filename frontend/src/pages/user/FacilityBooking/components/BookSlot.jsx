@@ -5,12 +5,10 @@ import DateSelector from "./DateSelector";
 import PartySize from "./PartySize";
 import SlotSelector from "./SlotSelector";
 import { useBooking } from "../../../../contexts/BookingContext";
-import { useAuth } from "../../../../contexts/AuthContext";
 import { toast } from "sonner";
 
 function BookSlot({ facilityId }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { bookFacility, processing, setErrors, setFacilityId } = useBooking();
 
   useEffect(() => {
@@ -43,7 +41,7 @@ function BookSlot({ facilityId }) {
         <button
           className="w-full sm:w-auto bg-primary hover:bg-primary-hover transition-all duration-200 px-8 py-3 rounded-md font-semibold shadow hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
           onClick={handleBooking}
-          disabled={user?.isAdmin || processing}
+          disabled={processing}
         >
           {processing ? "Processing..." : "Book Now"}
         </button>

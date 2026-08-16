@@ -2,7 +2,6 @@ import { Router } from "express";
 import verifyJWT from "../middlewares/auth.middleware.js";
 import {
   createBooking,
-  getAllBookings,
   getMyBookings,
   getSingleBooking,
   cancelBooking,
@@ -10,19 +9,13 @@ import {
 
 import {
   bookingCreationSchema,
-  getBookingsQuerySchema,
   getMyBookingsQuerySchema,
 } from "../validators/booking.validator.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
-import { object } from "zod";
 import { objectIdParamsSchema } from "../validators/common.validator.js";
 
 const bookingRouter = Router();
-
-bookingRouter
-  .route("/")
-  .get(verifyJWT, validate(getBookingsQuerySchema, "query"), getAllBookings);
 
 bookingRouter
   .route("/me")
