@@ -7,7 +7,7 @@ import {
   editFacility,
   deleteFacility,
   getFacilitySlots,
-  getAvailableTypes,
+  getAvailableCategories,
   getAvailableLocations,
 } from "../controllers/facilities.controller.js";
 
@@ -31,7 +31,7 @@ facilitiesRouter
   .post(verifyJWT, validate(createFacilitySchema), createFacility)
   .get(validate(filterFacilitiesSchema, "query"), filterFacilities);
 
-facilitiesRouter.route("/availableTypes").get(getAvailableTypes);
+facilitiesRouter.route("/availableCategories").get(getAvailableCategories);
 
 facilitiesRouter.route("/availableLocations").get(getAvailableLocations);
 
