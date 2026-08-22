@@ -33,7 +33,7 @@ const bookingSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["BOOKED", "CANCELLED", "COMPLETED", "NO_SHOW"],
+      enum: ["BOOKED", "CANCELLED", "COMPLETED"],
       default: "BOOKED",
     },
   },
