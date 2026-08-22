@@ -4,6 +4,17 @@ import ApiResponse from "../utils/ApiResponse.js";
 import Booking from "../models/booking.model.js";
 import Facility from "../models/facility.model.js";
 
+const bookingPopulate = [
+  {
+    path: "user",
+    select: "fullName email",
+  },
+  {
+    path: "facility",
+    select: "name slotDuration address.city openingTime",
+  },
+];
+
 function buildBookingFilters(validatedQuery) {
   const filters = {};
 
@@ -14,6 +25,7 @@ function buildBookingFilters(validatedQuery) {
     filters.slotIndex = validatedQuery.slotIndex;
   }
   if (validatedQuery.status) filters.status = validatedQuery.status;
+
   return filters;
 }
 
@@ -21,7 +33,7 @@ const createBooking = asyncHandler(async (req, res) => {
   const facility = await Facility.findById(req.validatedParams.facilityId);
 
   if (!facility) {
-    throw new ApiError(404, "Facility not found.");
+    throw new ApiError(404, "facility", "Facility not found.");
   }
 
   const bookingInfo = {
@@ -50,7 +62,7 @@ const createBooking = asyncHandler(async (req, res) => {
     );
   }
 
-  // Resolving Same day expired slot booking bug
+  // Resolving same-day expired slot booking bug
   const now = new Date();
 
   const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
@@ -60,13 +72,12 @@ const createBooking = asyncHandler(async (req, res) => {
   );
 
   const today = new Date();
-  today.setUTCHours(0, 0, 0, 0); // Midnight
+  today.setUTCHours(0, 0, 0, 0);
 
   if (
     bookingInfo.date.getTime() === today.getTime() &&
     currentPossibleSlot >= bookingInfo.slotIndex
   ) {
-    // Midnight timestamp match means same day
     throw new ApiError(409, "slotIndex", "Slot expired.");
   }
 
@@ -98,9 +109,9 @@ const createBooking = asyncHandler(async (req, res) => {
 
   const booking = await Booking.create(bookingInfo);
 
-  const populatedBooking = await Booking.findById(booking._id)
-    .populate("user", "fullName email")
-    .populate("facility", "name slotDuration address.city openingTime");
+  const populatedBooking = await Booking.findById(booking._id).populate(
+    bookingPopulate,
+  );
 
   return res
     .status(201)
@@ -111,16 +122,21 @@ const getFacilityBookings = asyncHandler(async (req, res) => {
   const facility = await Facility.findById(req.validatedParams.facilityId);
 
   if (!facility) {
-    throw new ApiError(404, "Facility not found.");
+    throw new ApiError(404, "facilityId", "Facility not found.");
   }
 
   if (!req.user.isFacilityOwner) {
-    throw new ApiError(403, "Access denied. You are not a facility owner.");
+    throw new ApiError(
+      403,
+      "user",
+      "Access denied. You are not a facility owner.",
+    );
   }
 
   if (!facility.owner.equals(req.user._id)) {
     throw new ApiError(
       403,
+      "facilityId",
       "Access denied. You are not the owner of this facility.",
     );
   }
@@ -129,29 +145,26 @@ const getFacilityBookings = asyncHandler(async (req, res) => {
 
   filters.facility = req.validatedParams.facilityId;
 
-  const bookings = await Booking.find(filters)
-    .populate("user", "fullName email")
-    .populate("facility", "name slotDuration address.city openingTime");
+  const bookings = await Booking.find(filters).populate(bookingPopulate);
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, bookings, "Facility Bookings fetched successfully."),
+      new ApiResponse(200, bookings, "Facility bookings fetched successfully."),
     );
 });
 
 const getMyBookings = asyncHandler(async (req, res) => {
-  let filters = buildBookingFilters(req.validatedQuery);
+  const filters = buildBookingFilters(req.validatedQuery);
+
   filters.user = req.user._id;
 
-  const bookings = await Booking.find(filters)
-    .populate("user", "fullName email")
-    .populate("facility", "name slotDuration address.city openingTime");
+  const bookings = await Booking.find(filters).populate(bookingPopulate);
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, bookings, "User's Bookings fetched successfully."),
+      new ApiResponse(200, bookings, "User's bookings fetched successfully."),
     );
 });
 
@@ -161,7 +174,7 @@ const getSingleBooking = asyncHandler(async (req, res) => {
   const booking = await Booking.findById(bookingId);
 
   if (!booking) {
-    throw new ApiError(404, "Booking not found.");
+    throw new ApiError(404, "bookingId", "Booking not found.");
   }
 
   // Authority check
@@ -171,19 +184,17 @@ const getSingleBooking = asyncHandler(async (req, res) => {
     const facility = await Facility.findById(booking.facility);
 
     if (!facility) {
-      throw new ApiError(404, "Associated facility not found.");
+      throw new ApiError(404, "facility", "Associated facility not found.");
     }
 
     if (!facility.owner.equals(req.user._id)) {
-      throw new ApiError(403, "Access denied.");
+      throw new ApiError(403, "bookingId", "Access denied.");
     }
   } else {
-    throw new ApiError(403, "Access denied.");
+    throw new ApiError(403, "bookingId", "Access denied.");
   }
 
-  await booking
-    .populate("user", "fullName email")
-    .populate("facility", "name slotDuration address.city openingTime");
+  await booking.populate(bookingPopulate);
 
   return res
     .status(200)
@@ -196,14 +207,15 @@ const cancelBooking = asyncHandler(async (req, res) => {
   const booking = await Booking.findById(bookingId);
 
   if (!booking) {
-    throw new ApiError(404, "Booking not found.");
+    throw new ApiError(404, "bookingId", "Booking not found.");
   }
 
   if (!booking.user.equals(req.user._id)) {
-    throw new ApiError(403, "Access denied.");
+    throw new ApiError(403, "bookingId", "Access denied.");
   }
 
   booking.status = "CANCELLED";
+
   await booking.save();
 
   return res

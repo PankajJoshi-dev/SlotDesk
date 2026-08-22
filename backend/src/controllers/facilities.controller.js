@@ -16,6 +16,7 @@ const createFacility = asyncHandler(async (req, res) => {
   if (existingFacility) {
     throw new ApiError(
       409,
+      "facility",
       "A facility with this name already exists in this locality, please choose a different name.",
     );
   }
@@ -34,7 +35,7 @@ const createFacility = asyncHandler(async (req, res) => {
 });
 
 const filterFacilities = asyncHandler(async (req, res) => {
-  const { search, facilityType, address } = req.validatedQuery;
+  const { search, category, address } = req.validatedQuery;
 
   const filters = {};
 
@@ -49,8 +50,8 @@ const filterFacilities = asyncHandler(async (req, res) => {
     filters["address.city"] = address.city;
   }
 
-  if (facilityType) {
-    filters.facilityType = facilityType;
+  if (category) {
+    filters.category = category;
   }
 
   const facilities = await Facility.find(filters);
@@ -69,7 +70,7 @@ const getFacility = asyncHandler(async (req, res) => {
   });
 
   if (!facility) {
-    throw new ApiError(404, "Facility not found.");
+    throw new ApiError(404, "facility", "Facility not found.");
   }
 
   return res
@@ -83,15 +84,23 @@ const editFacility = asyncHandler(async (req, res) => {
   const targetFacility = await Facility.findById(facilityId);
 
   if (!targetFacility) {
-    throw new ApiError(404, "Facility not found.");
+    throw new ApiError(404, "facility", "Facility not found.");
   }
 
   if (!req.user.isFacilityOwner) {
-    throw new ApiError(403, "Access denied. You are not a facility owner.");
+    throw new ApiError(
+      403,
+      "access",
+      "Access denied. You are not a facility owner.",
+    );
   }
 
   if (!targetFacility.owner.equals(req.user._id)) {
-    throw new ApiError(403, "Only the facility owner can edit this facility.");
+    throw new ApiError(
+      403,
+      "facility",
+      "Only the facility owner can edit this facility.",
+    );
   }
 
   if (req.validatedBody.name || req.validatedBody.address) {
@@ -101,12 +110,13 @@ const editFacility = asyncHandler(async (req, res) => {
     const existingFacility = await Facility.findOne({
       name: newName,
       address: newAddress,
-      _id: { $ne: facilityId }, // Exclude current facility
+      _id: { $ne: facilityId },
     });
 
     if (existingFacility) {
       throw new ApiError(
         409,
+        "facility",
         "A facility with this name already exists in this locality, please choose a different name.",
       );
     }
@@ -134,16 +144,21 @@ const deleteFacility = asyncHandler(async (req, res) => {
   const targetFacility = await Facility.findById(facilityId);
 
   if (!targetFacility) {
-    throw new ApiError(404, "Facility not found.");
+    throw new ApiError(404, "facility", "Facility not found.");
   }
 
   if (!req.user.isFacilityOwner) {
-    throw new ApiError(403, "Access denied. You are not a facility owner.");
+    throw new ApiError(
+      403,
+      "access",
+      "Access denied. You are not a facility owner.",
+    );
   }
 
   if (!targetFacility.owner.equals(req.user._id)) {
     throw new ApiError(
       403,
+      "facility",
       "Only the facility owner can delete this facility.",
     );
   }
@@ -170,7 +185,7 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
   const facility = await Facility.findById(facilityId);
 
   if (!facility) {
-    throw new ApiError(404, "Facility not found.");
+    throw new ApiError(404, "facility", "Facility not found.");
   }
 
   const totalSlots = Math.floor(
@@ -186,7 +201,6 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  // Compare with today's midnight timestamp
   const isToday = date.getTime() === today.getTime();
 
   const now = new Date();
@@ -198,8 +212,8 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
   );
 
   const slots = [];
+
   for (let i = 0; i < totalSlots; i++) {
-    const timeStamp = new Date(now).getTime();
     slots[i] = {
       remaining: facility.capacity,
       isAvailable: isToday ? i > currentPossibleSlot : true,
@@ -226,14 +240,14 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
     );
 });
 
-const getAvailableTypes = asyncHandler(async (req, res) => {
-  const types = await Facility.distinct("facilityType", {
+const getAvailableCategories = asyncHandler(async (req, res) => {
+  const categories = await Facility.distinct("category", {
     isActive: true,
   });
 
   return res
     .status(200)
-    .json(new ApiResponse(200, types, "Facility types fetched successfully"));
+    .json(new ApiResponse(200, categories, "Categories fetched successfully"));
 });
 
 const getAvailableLocations = asyncHandler(async (req, res) => {
@@ -255,6 +269,6 @@ export {
   editFacility,
   deleteFacility,
   getFacilitySlots,
-  getAvailableTypes,
+  getAvailableCategories,
   getAvailableLocations,
 };

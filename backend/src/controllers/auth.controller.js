@@ -21,7 +21,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    throw new ApiError(409, "A user with this email already exists.");
+    throw new ApiError(409, "email", "A user with this email already exists.");
   }
 
   const user = await User.create({
@@ -33,6 +33,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   const createdUser = user.toObject();
+
   delete createdUser.password;
 
   const accessToken = generateAccessToken(user._id);
@@ -49,12 +50,13 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email }).select("+password");
 
   if (!user || !(await user.comparePassword(password))) {
-    throw new ApiError(401, "Invalid email or password.");
+    throw new ApiError(401, "credentials", "Invalid email or password.");
   }
 
   const accessToken = generateAccessToken(user._id);
 
   const loggedInUser = user.toObject();
+
   delete loggedInUser.password;
 
   return res
