@@ -1,53 +1,53 @@
 import React, { useEffect, useState } from "react";
-import { getAvailableTypes } from "../../../../api/searchApi";
+import { getAvailableCategoriesRequest } from "../../../../api/searchApi";
 import { useSearch } from "../../../../contexts/SearchContext";
 
 function FilterSection() {
   const { filters, setFilters } = useSearch();
 
-  const [facilityTypes, setFacilityTypes] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const fetchAvailabeTypes = async () => {
+    const fetchAvailabeCategories = async () => {
       try {
-        const res = await getAvailableTypes();
-        setFacilityTypes(res.data);
+        const res = await getAvailableCategoriesRequest();
+        setCategories(res.data);
       } catch (err) {
         // Errors are handled globally
       }
     };
 
-    fetchAvailabeTypes();
+    fetchAvailabeCategories();
   }, []);
 
-  const handleClick = (type) => {
+  const handleClick = (cat) => {
     setFilters((prev) => ({
       ...prev,
-      facilityType: type,
+      category: cat,
     }));
   };
 
-  const filterClass = (facilityType) =>
+  const filterClass = (category) =>
     `self-start shrink-0 rounded-full px-3 py-1 text-md text-text transition-all ${
-      filters.facilityType === facilityType
+      filters.category === category
         ? "bg-primary"
         : "bg-primary/20 hover:bg-primary/30 hover:scale-102"
     }`;
 
-  const typePills = facilityTypes.map((type) => (
+  const catPills = categories.map((cat) => (
     <span
-      key={type}
-      onClick={() => handleClick(type)}
-      className={filterClass(type)}
+      key={cat}
+      onClick={() => handleClick(cat)}
+      className={filterClass(cat)}
     >
-      {type}
+      {cat}
     </span>
   ));
 
   return (
     <div className="overflow-x-auto p-4 border-b border-border">
-      <div className="flex flex-row justify-start content-center gap-4">
-        {typePills}
+      <div className="flex flex-row justify-center-safe content-center gap-4">
+        {catPills}
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ function FacilityCard({ facility }) {
       onClick={() => navigate(`/facilities/${facility._id}`)}
     >
       <img
-        src={facility?.imageUrl}
+        src={facility?.facilityImage?.imageUrl}
         alt="Facility"
         className="h-full aspect-square rounded-md object-cover shrink-0 bg-primary/20"
       />
@@ -26,7 +26,7 @@ function FacilityCard({ facility }) {
 
         <div className="mt-auto">
           <span className="inline-flex rounded-full bg-primary/20 px-2 py-1 text-xs text-text">
-            {facility?.facilityType}
+            {facility?.category}
           </span>
         </div>
       </div>

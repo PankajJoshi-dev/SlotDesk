@@ -15,16 +15,20 @@ const filterFacilitiesRequest = async (filters) => {
   return response.data;
 };
 
-const getAvailableTypes = async () => {
-  const response = await api.get("/facilities/availableTypes");
+const getAvailableCategoriesRequest = async () => {
+  const response = await api.get("/facilities/availableCategories");
   log(response.data);
   return response.data;
 };
 
-const getAvailableLocations = async () => {
+const getAvailableLocationsRequest = async () => {
   const response = await api.get("/facilities/availableLocations");
   log(response.data);
   return response.data;
 };
 
-export { filterFacilitiesRequest, getAvailableTypes, getAvailableLocations };
+export {
+  filterFacilitiesRequest,
+  getAvailableCategoriesRequest,
+  getAvailableLocationsRequest,
+};
