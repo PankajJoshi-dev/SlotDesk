@@ -1,5 +1,36 @@
 import * as z from "zod";
 
+const STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+];
+
 const registerSchema = z.object({
   fullName: z
     .string({ error: "Full Name is required." })
@@ -24,6 +55,15 @@ const registerSchema = z.object({
           /^[A-Za-z]+(?: [A-Za-z]+)*$/,
           "City name must contain only letters and spaces.",
         ),
+
+      pinCode: z
+        .string()
+        .length(6, { message: "PIN code must be exactly 6 digits." })
+        .regex(/^\d+$/, { message: "PIN code must contain only numbers." }),
+
+      state: z.enum(STATES, {
+        error: "State is required.",
+      }),
     },
     { error: "Address is required." },
   ),

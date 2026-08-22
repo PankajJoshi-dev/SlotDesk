@@ -1,26 +1,18 @@
 import * as z from "zod";
-import { objectIdSchema, dateSchema } from "./common.validator.js";
+import { dateSchema } from "./common.validator.js";
 
-const FACILITY_TYPES = [
+const CATEGORIES = [
   "Sports",
-  "Gym",
-  "Swimming Pool",
-  "Auditorium",
-  "Classroom",
-  "Laboratory",
-  "Library",
-  "Meeting Room",
-  "Event Hall",
-  "Music Room",
-  "Dance Studio",
-  "Coworking Space",
-  "Court",
-  "Gaming Room",
-  "Medical Facility",
-  "Parking",
+  "Fitness",
+  "Recreation",
+  "Academic",
+  "Study",
+  "Meeting",
+  "Events",
+  "Arts",
   "Workspace",
-  "Club Room",
-  "Multipurpose Hall",
+  "Dining",
+  "Parking",
   "Other",
 ];
 
@@ -34,13 +26,38 @@ const DAYS = [
   "Sunday",
 ];
 
-const facilitySchema = z.object({
-  ownerEmail: z
-    .string({ error: "Owner email is required." })
-    .trim()
-    .toLowerCase()
-    .email("Invalid email format."),
+const STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+];
 
+const facilitySchema = z.object({
   name: z
     .string({ error: "Facility name is required." })
     .trim()
@@ -51,8 +68,8 @@ const facilitySchema = z.object({
       "Name can contain only letters, numbers, spaces and hyphens.",
     ),
 
-  facilityType: z.enum(FACILITY_TYPES, {
-    error: "Facility type is required.",
+  category: z.enum(CATEGORIES, {
+    error: "State is required.",
   }),
 
   address: z.object(
@@ -64,6 +81,15 @@ const facilitySchema = z.object({
           /^[A-Za-z]+(?: [A-Za-z]+)*$/,
           "City name must contain only letters and spaces.",
         ),
+
+      pinCode: z
+        .string()
+        .length(6, { message: "PIN code must be exactly 6 digits." })
+        .regex(/^\d+$/, { message: "PIN code must contain only numbers." }),
+
+      state: z.enum(STATES, {
+        error: "State is required.",
+      }),
     },
     { error: "Address is required." },
   ),
@@ -114,9 +140,6 @@ const createFacilitySchema = facilitySchema.refine(
 );
 
 const editFacilitySchema = facilitySchema
-  .omit({
-    ownerEmail: true,
-  })
   .partial()
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update.",
@@ -135,7 +158,7 @@ const editFacilitySchema = facilitySchema
   );
 
 const filterFacilitiesSchema = z.object({
-  facilityType: z.enum(FACILITY_TYPES).optional(),
+  category: z.enum(CATEGORIES).optional(),
 
   address: z
     .object(
