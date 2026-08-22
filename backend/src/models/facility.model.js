@@ -9,6 +9,17 @@ const facilitySchema = new mongoose.Schema(
       maxlength: 100,
     },
 
+    facilityImage: {
+      imageUrl: {
+        type: String,
+        required: true,
+      },
+      publicId: {
+        type: String,
+        required: true,
+      },
+    },
+
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

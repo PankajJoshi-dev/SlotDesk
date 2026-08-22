@@ -25,7 +25,7 @@ function FacilityDetails({ facilityId }) {
     <div className="mx-auto w-full max-w-5xl py-5">
       <div className="space-y-5">
         <img
-          src={facilityDetails?.imageUrl}
+          src={facilityDetails?.facilityImage?.imageUrl}
           alt={facilityDetails?.name}
           className="h-64 w-full rounded-xl border object-cover bg-primary/20"
         />
