@@ -11,7 +11,7 @@ const bookingPopulate = [
   },
   {
     path: "facility",
-    select: "name slotDuration address.city openingTime",
+    select: "name slotDuration address.city openingTime category",
   },
 ];
 

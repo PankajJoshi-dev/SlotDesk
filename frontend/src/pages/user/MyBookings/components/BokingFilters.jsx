@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMyBooking } from "../../../../contexts/MyBookingContext";
 
 function BookingFilters() {
@@ -6,6 +6,14 @@ function BookingFilters() {
 
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
+
+  useEffect(() => {
+    return () => {
+      setFilters({
+        status: "BOOKED",
+      });
+    };
+  }, [setFilters]);
 
   const handleClick = (status) => {
     setFilters((prev) => ({
@@ -24,7 +32,7 @@ function BookingFilters() {
 
   return (
     <div className="overflow-x-auto mx-4 p-4 border-b border-border">
-      <div className="flex flex-row justify-start content-center gap-4">
+      <div className="flex flex-row justify-center-safe content-center gap-4">
         <span
           onClick={() =>
             setFilters((prev) => ({ ...prev, status: undefined, date: today }))
