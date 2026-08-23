@@ -63,6 +63,7 @@ export default function AppRoutes() {
           </Route>
         </Route>
 
+        <Route path="/404" element={<Error />} />
         <Route path="*" element={<Error />} />
       </Route>
     </Routes>

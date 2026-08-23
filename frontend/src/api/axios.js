@@ -10,7 +10,13 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const status = error.response.status;
+    const status = error.response?.status;
+    const field = error.response?.data?.field;
+
+    if (status === 404 || (status === 400 && field === "facilityId")) {
+      window.location.href = "/404";
+      return Promise.reject(error);
+    }
     if (status === 400 || status === 401) {
       console.log(error.response);
       return Promise.reject(error);
