@@ -69,30 +69,26 @@ const facilitySchema = z.object({
     ),
 
   category: z.enum(CATEGORIES, {
-    error: "State is required.",
+    error: "Category is required.",
   }),
 
-  address: z.object(
-    {
-      city: z
-        .string({ error: "City is required." })
-        .trim()
-        .regex(
-          /^[A-Za-z]+(?: [A-Za-z]+)*$/,
-          "City name must contain only letters and spaces.",
-        ),
+  city: z
+    .string({ error: "City is required." })
+    .trim()
+    .regex(
+      /^[A-Za-z]+(?: [A-Za-z]+)*$/,
+      "City name must contain only letters and spaces.",
+    ),
 
-      pinCode: z
-        .string()
-        .length(6, { message: "PIN code must be exactly 6 digits." })
-        .regex(/^\d+$/, { message: "PIN code must contain only numbers." }),
+  pinCode: z
+    .string()
+    .trim()
+    .length(6, { message: "PIN code must be exactly 6 digits." })
+    .regex(/^\d+$/, { message: "PIN code must contain only numbers." }),
 
-      state: z.enum(STATES, {
-        error: "State is required.",
-      }),
-    },
-    { error: "Address is required." },
-  ),
+  state: z.enum(STATES, {
+    error: "State is required.",
+  }),
 
   capacity: z.coerce
     .number({ error: "Capacity is required." })

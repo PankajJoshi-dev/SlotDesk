@@ -1,12 +1,24 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
+
+import cloudinary from "../config/coudinary.config.js";
+
 import Facility from "../models/facility.model.js";
 import User from "../models/user.model.js";
 import Booking from "../models/booking.model.js";
 
 const createFacility = asyncHandler(async (req, res) => {
-  const { ...facilityData } = req.validatedBody;
+  const { city, pinCode, state, ...facilityData } = req.validatedBody;
+  facilityData.address = {
+    city,
+    pinCode,
+    state,
+  };
+
+  if (!req.file?.buffer) {
+    throw new ApiError(400, "facilityImage", "Facility image is required");
+  }
 
   const existingFacility = await Facility.findOne({
     name: facilityData.name,
@@ -23,15 +35,48 @@ const createFacility = asyncHandler(async (req, res) => {
 
   facilityData.owner = req.user._id;
 
-  const facility = await Facility.create(facilityData);
+  let uploadedImage;
 
-  await User.findByIdAndUpdate(req.user._id, {
-    $set: { isFacilityOwner: true },
-  });
+  try {
+    uploadedImage = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "slotdesk/facilities",
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        },
+      );
 
-  return res
-    .status(201)
-    .json(new ApiResponse(201, facility, "Facility created successfully"));
+      stream.end(req.file.buffer);
+    });
+
+    facilityData.facilityImage = {
+      imageUrl: uploadedImage.secure_url,
+      publicId: uploadedImage.public_id,
+    };
+
+    const facility = await Facility.create(facilityData);
+
+    await User.findByIdAndUpdate(req.user._id, {
+      $set: { isFacilityOwner: true },
+    });
+
+    return res
+      .status(201)
+      .json(new ApiResponse(201, facility, "Facility created successfully"));
+  } catch (error) {
+    if (uploadedImage?.public_id) {
+      try {
+        await cloudinary.uploader.destroy(uploadedImage.public_id);
+      } catch (cleanupError) {
+        console.error("Cloudinary cleanup failed:", cleanupError);
+      }
+    }
+
+    throw error;
+  }
 });
 
 const filterFacilities = asyncHandler(async (req, res) => {

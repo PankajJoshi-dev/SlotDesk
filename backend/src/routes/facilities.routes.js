@@ -1,5 +1,8 @@
 import { Router } from "express";
+
 import verifyJWT from "../middlewares/auth.middleware.js";
+import upload from "../middlewares/upload.middleware.js";
+
 import {
   createFacility,
   filterFacilities,
@@ -28,7 +31,17 @@ const facilitiesRouter = Router();
 
 facilitiesRouter
   .route("/")
-  .post(verifyJWT, validate(createFacilitySchema), createFacility)
+  .post(
+    verifyJWT,
+    upload.single("facilityImage"),
+    (req, res, next) => {
+      console.log("FILE:", req.file);
+      console.log("BODY:", req.body);
+      next();
+    },
+    validate(createFacilitySchema),
+    createFacility,
+  )
   .get(validate(filterFacilitiesSchema, "query"), filterFacilities);
 
 facilitiesRouter.route("/availableCategories").get(getAvailableCategories);
