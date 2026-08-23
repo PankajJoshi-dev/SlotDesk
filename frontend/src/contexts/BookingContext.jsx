@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { bookingRequest } from "../api/bookingApi";
-import { geteSlotsRequest } from "../api/facilityApi";
+import { getSlotsRequest } from "../api/facilityApi";
 import { useNavigate } from "react-router-dom";
 
 const BookingContext = createContext();
@@ -70,7 +70,7 @@ const BookingProvider = ({ children }) => {
     setLoading(true);
 
     try {
-      const res = await geteSlotsRequest(facilityId, date);
+      const res = await getSlotsRequest(facilityId, date);
       setSlots(res.data);
     } finally {
       setLoading(false);

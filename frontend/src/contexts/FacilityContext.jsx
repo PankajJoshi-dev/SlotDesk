@@ -1,36 +1,97 @@
 import { createContext, useContext, useState } from "react";
-import { facilityDetailsRequest } from "../api/facilityApi";
+import {
+  registerFacilityRequest,
+  editFacilityRequest,
+  deleteFacilityRequest,
+  facilityDetailsRequest,
+  getFacilityBookingsRequest,
+} from "../api/facilityApi";
 
 const FacilityContext = createContext();
 
 const FacilityProvider = ({ children }) => {
   const [facilityDetails, setFacilityDetails] = useState(null);
-
+  const [facilityBookings, setFacilityBookings] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  async function registerFacility(facilityData) {
+    setLoading(true);
+
+    try {
+      const res = await registerFacilityRequest(facilityData);
+      setFacilityDetails(res?.data);
+      return res;
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function getFacilityDetails(facilityId) {
     setLoading(true);
 
     try {
       const res = await facilityDetailsRequest(facilityId);
-      setFacilityDetails(res.data);
+      setFacilityDetails(res?.data ?? res);
+      return res;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function editFacility(facilityId, facilityData) {
+    setLoading(true);
+
+    try {
+      const res = await editFacilityRequest(facilityId, facilityData);
+      setFacilityDetails(res?.data ?? res);
+      return res;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function deleteFacility(facilityId) {
+    setLoading(true);
+
+    try {
+      const res = await deleteFacilityRequest(facilityId);
+      setFacilityDetails(null);
+      return res;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function getFacilityBookings(facilityId) {
+    setLoading(true);
+
+    try {
+      const res = await getFacilityBookingsRequest(facilityId);
+      setFacilityBookings(res?.data ?? []);
+      return res;
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <FacilityContext
+    <FacilityContext.Provider
       value={{
         facilityDetails,
         setFacilityDetails,
+        facilityBookings,
+        setFacilityBookings,
+        registerFacility,
         getFacilityDetails,
+        editFacility,
+        deleteFacility,
+        getFacilityBookings,
         loading,
         setLoading,
       }}
     >
       {children}
-    </FacilityContext>
+    </FacilityContext.Provider>
   );
 };
 
