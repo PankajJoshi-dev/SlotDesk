@@ -6,7 +6,6 @@ import formatTime from "../../../../utils/formatTIme";
 function UpcomingBookings({ bookings }) {
   const statusStyles = {
     BOOKED: "bg-green-300 text-green-700 border-green-200",
-    TODAY: "bg-orange-300 text-orange-700 border-orange-200",
     COMPLETED: "bg-blue-300 text-blue-700 border-blue-200",
     CANCELLED: "bg-gray-300 text-gray-600 border-gray-200",
   };
@@ -59,7 +58,7 @@ function UpcomingBookings({ bookings }) {
         </div>
 
         {bookings.map((booking) => {
-          const Icon = getFacilityIcon(booking);
+          const Icon = getFacilityIcon(booking?.facility?.category);
           const startTime =
             booking.facility.openingTime +
             booking.slotIndex * booking.facility.slotDuration;

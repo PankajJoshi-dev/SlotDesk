@@ -28,8 +28,8 @@ const facilityIcons = {
   Other: Building2,
 };
 
-function getFacilityIcon(booking) {
-  return facilityIcons[booking?.facility?.category] || Building2;
+function getFacilityIcon(category) {
+  return facilityIcons[category] || Building2;
 }
 
 export default getFacilityIcon;

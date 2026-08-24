@@ -41,7 +41,7 @@ function NextBooking({ booking }) {
     );
   }
 
-  const Icon = getFacilityIcon(booking);
+  const Icon = getFacilityIcon(booking?.facility?.category);
 
   const startTime =
     booking.facility.openingTime +

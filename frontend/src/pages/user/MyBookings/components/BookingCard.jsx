@@ -15,7 +15,7 @@ function BookingCard({ booking }) {
     CANCELLED: "bg-gray-300 text-gray-600 border-gray-200",
   };
 
-  const Icon = getFacilityIcon(booking);
+  const Icon = getFacilityIcon(booking?.facility?.category);
 
   const startTime =
     booking?.facility?.openingTime +
