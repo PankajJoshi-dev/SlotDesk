@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, CalendarDays, Check, Clock3, Search } from "lucide-react";
-import Navbar from "../../../components/Navbar/Navbar";
-import Footer from "../../../components/Footer/Footer";
 
 const features = [
   {

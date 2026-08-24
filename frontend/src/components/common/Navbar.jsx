@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import logo from "../../assets/images/logo.png";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -45,9 +45,27 @@ function Navbar() {
           </NavLink>
 
           {!loading && user && (
-            <NavLink to="/bookings" className={navLinkClass}>
-              My Bookings
-            </NavLink>
+            <>
+              <NavLink to="/bookings" className={navLinkClass}>
+                My Bookings
+              </NavLink>
+              <NavLink
+                to="/register-facility"
+                className={navLinkClass}
+                onClick={closeMenu}
+              >
+                Register Facility
+              </NavLink>
+              {user.isFacilityOwner && (
+                <NavLink
+                  to="/owner"
+                  className={navLinkClass}
+                  onClick={closeMenu}
+                >
+                  Owner
+                </NavLink>
+              )}
+            </>
           )}
 
           {!loading &&
@@ -109,13 +127,31 @@ function Navbar() {
             </NavLink>
 
             {!loading && user && (
-              <NavLink
-                to="/bookings"
-                className={navLinkClass}
-                onClick={closeMenu}
-              >
-                My Bookings
-              </NavLink>
+              <>
+                <NavLink
+                  to="/bookings"
+                  className={navLinkClass}
+                  onClick={closeMenu}
+                >
+                  My Bookings
+                </NavLink>
+                <NavLink
+                  to="/register-facility"
+                  className={navLinkClass}
+                  onClick={closeMenu}
+                >
+                  Register Facility
+                </NavLink>
+                {user.isFacilityOwner && (
+                  <NavLink
+                    to="/owner"
+                    className={navLinkClass}
+                    onClick={closeMenu}
+                  >
+                    Owner
+                  </NavLink>
+                )}
+              </>
             )}
 
             {!loading &&
