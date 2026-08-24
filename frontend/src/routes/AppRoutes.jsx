@@ -23,6 +23,7 @@ import EditFacility from "../pages/owner/EditFacility/EditFacility";
 import FacilityBookings from "../pages/owner/FacilityBookings/FacilityBookings";
 
 import Error from "../pages/errors/Error";
+import OwnerLayout from "../layouts/OwnerLayout";
 
 export default function AppRoutes() {
   return (
@@ -43,7 +44,14 @@ export default function AppRoutes() {
           <Route path="/bookings/:bookingId" element={<MyBookings />} />
           <Route path="/booking-success" element={<BookingSuccess />} />
           <Route path="/register-facility" element={<RegisterFacility />} />
+        </Route>
 
+        <Route path="/404" element={<Error />} />
+        <Route path="*" element={<Error />} />
+      </Route>
+
+      <Route element={<OwnerLayout />}>
+        <Route element={<PrivateRoute />}>
           {/* Owner */}
           <Route element={<OwnerRoute />}>
             <Route path="/owner" element={<OwnerDashboard />} />
@@ -62,9 +70,6 @@ export default function AppRoutes() {
             />
           </Route>
         </Route>
-
-        <Route path="/404" element={<Error />} />
-        <Route path="*" element={<Error />} />
       </Route>
     </Routes>
   );
