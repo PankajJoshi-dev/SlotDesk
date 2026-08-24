@@ -106,6 +106,18 @@ const filterFacilities = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, facilities, "Facilities fetched successfully."));
 });
 
+const getMyFacilities = asyncHandler(async (req, res) => {
+  const facilities = await Facility.find({
+    owner: req.user._id,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, facilities, "User Facilities fetched successfully."),
+    );
+});
+
 const getFacility = asyncHandler(async (req, res) => {
   const { facilityId } = req.validatedParams;
 
@@ -310,6 +322,7 @@ const getAvailableLocations = asyncHandler(async (req, res) => {
 export {
   createFacility,
   filterFacilities,
+  getMyFacilities,
   getFacility,
   editFacility,
   deleteFacility,

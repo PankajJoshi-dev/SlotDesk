@@ -25,6 +25,12 @@ const deleteFacilityRequest = async (facilityId) => {
   return response.data;
 };
 
+const getMyFacilityRequest = async (facilityId) => {
+  const response = await api.get(`/facilities/me`);
+  log(response.data);
+  return response.data;
+};
+
 const facilityDetailsRequest = async (facilityId) => {
   const response = await api.get(`/facilities/${facilityId}`);
   log(response.data);
@@ -51,6 +57,7 @@ export {
   registerFacilityRequest,
   editFacilityRequest,
   deleteFacilityRequest,
+  getMyFacilityRequest,
   facilityDetailsRequest,
   getFacilityBookingsRequest,
   getSlotsRequest,

@@ -6,6 +6,7 @@ import upload from "../middlewares/upload.middleware.js";
 import {
   createFacility,
   filterFacilities,
+  getMyFacilities,
   getFacility,
   editFacility,
   deleteFacility,
@@ -34,15 +35,12 @@ facilitiesRouter
   .post(
     verifyJWT,
     upload.single("facilityImage"),
-    (req, res, next) => {
-      console.log("FILE:", req.file);
-      console.log("BODY:", req.body);
-      next();
-    },
     validate(createFacilitySchema),
     createFacility,
   )
   .get(validate(filterFacilitiesSchema, "query"), filterFacilities);
+
+facilitiesRouter.route("/me").get(verifyJWT, getMyFacilities);
 
 facilitiesRouter.route("/availableCategories").get(getAvailableCategories);
 
