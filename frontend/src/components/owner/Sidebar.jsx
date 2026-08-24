@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { LoaderCircle, Building2, Home, LogOut, X } from "lucide-react";
+import { LoaderCircle, Home, LogOut, X, Globe } from "lucide-react";
 
 import logo from "../../assets/images/logo.png";
 
@@ -54,7 +54,7 @@ function Sidebar({ isOpen, onClose }) {
       >
         <div className="flex h-full min-w-0 flex-col">
           <div className="flex min-w-0 items-center justify-between px-4 pt-4 lg:justify-center">
-            <NavLink to="/owner" onClick={onClose} className="min-w-0">
+            <NavLink to="/home" onClick={onClose} className="min-w-0">
               <img
                 src={logo}
                 alt="SlotDesk Logo"
@@ -109,6 +109,10 @@ function Sidebar({ isOpen, onClose }) {
             </div>
           </nav>
           <div className="mt-auto px-2 pb-4">
+            <SidebarLink to="/home" icon={Globe} onClick={onClose}>
+              Home
+            </SidebarLink>
+
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}
