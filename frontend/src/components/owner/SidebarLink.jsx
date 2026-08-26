@@ -1,11 +1,11 @@
 import { NavLink } from "react-router-dom";
 
-function SidebarLink({ to, icon: Icon, children, onClick }) {
+function SidebarLink({ to, icon: Icon, children, onClick, end = true }) {
   return (
     <NavLink
       to={to}
       onClick={onClick}
-      end
+      end={end}
       className={({ isActive }) =>
         `group flex min-w-0 w-full items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-all ${
           isActive

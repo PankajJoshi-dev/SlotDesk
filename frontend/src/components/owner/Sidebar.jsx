@@ -100,6 +100,7 @@ function Sidebar({ isOpen, onClose }) {
                       to={`/owner/facilities/${facility._id}`}
                       icon={getFacilityIcon(facility?.category)}
                       onClick={onClose}
+                      end={false}
                     >
                       {facility.name}
                     </SidebarLink>
