@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useFacility } from "../../../../contexts/FacilityContext";
+import { useNavigate } from "react-router-dom";
 
 function RegisterFacilityForm() {
+  const navigate = useNavigate();
   const { loading, registerFacility } = useFacility();
   const [errors, setErrors] = useState({});
 
@@ -183,8 +185,10 @@ function RegisterFacilityForm() {
       console.log(facilityImage.name);
       console.log(facilityImage.size);
 
-      await registerFacility(data);
+      const res = await registerFacility(data);
       toast.success("Facility created successfully!");
+
+      navigate(`/owner/facilities/${res?.data?._id}`);
 
       setFormData({
         name: "",
