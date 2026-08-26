@@ -137,6 +137,7 @@ const getFacility = asyncHandler(async (req, res) => {
 
 const editFacility = asyncHandler(async (req, res) => {
   const { facilityId } = req.validatedParams;
+  const { city, pinCode, state, ...facilityData } = req.validatedBody;
 
   const targetFacility = await Facility.findById(facilityId);
 
@@ -160,14 +161,29 @@ const editFacility = asyncHandler(async (req, res) => {
     );
   }
 
-  if (req.validatedBody.name || req.validatedBody.address) {
-    const newName = req.validatedBody.name ?? targetFacility.name;
-    const newAddress = req.validatedBody.address ?? targetFacility.address;
+  const addressChanged =
+    city !== undefined || pinCode !== undefined || state !== undefined;
+
+  const nameChanged = facilityData.name !== undefined;
+
+  let address;
+
+  if (nameChanged || addressChanged) {
+    address = {
+      city: city ?? targetFacility.address.city,
+      pinCode: pinCode ?? targetFacility.address.pinCode,
+      state: state ?? targetFacility.address.state,
+    };
+
+    const newName = facilityData.name ?? targetFacility.name;
 
     const existingFacility = await Facility.findOne({
-      name: newName,
-      address: newAddress,
       _id: { $ne: facilityId },
+      owner: req.user._id,
+      name: newName,
+      "address.city": address.city,
+      "address.pinCode": address.pinCode,
+      "address.state": address.state,
     });
 
     if (existingFacility) {
@@ -179,20 +195,87 @@ const editFacility = asyncHandler(async (req, res) => {
     }
   }
 
-  const updatedFacility = await Facility.findByIdAndUpdate(
-    facilityId,
-    req.validatedBody,
-    {
-      returnDocument: "after",
-      runValidators: true,
-    },
-  );
+  let uploadedImage = null;
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, updatedFacility, "Facility updated successfully."),
+  try {
+    // Upload the new image only if it was provided.
+    if (req.file?.buffer) {
+      uploadedImage = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "slotdesk/facilities",
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+              return;
+            }
+
+            resolve(result);
+          },
+        );
+
+        stream.end(req.file.buffer);
+      });
+
+      facilityData.facilityImage = {
+        imageUrl: uploadedImage.secure_url,
+        publicId: uploadedImage.public_id,
+      };
+    }
+
+    // Only include address if it was actually changed.
+    const updateData = {
+      ...facilityData,
+    };
+
+    if (address) {
+      updateData.address = address;
+    }
+
+    const updatedFacility = await Facility.findByIdAndUpdate(
+      facilityId,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      },
     );
+
+    if (!updatedFacility) {
+      throw new ApiError(404, "facility", "Facility not found.");
+    }
+
+    if (
+      uploadedImage?.public_id &&
+      targetFacility.facilityImage?.publicId &&
+      targetFacility.facilityImage.publicId !== uploadedImage.public_id
+    ) {
+      try {
+        await cloudinary.uploader.destroy(
+          targetFacility.facilityImage.publicId,
+        );
+      } catch (cleanupError) {
+        console.error("Old Cloudinary image cleanup failed:", cleanupError);
+      }
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, updatedFacility, "Facility updated successfully."),
+      );
+  } catch (error) {
+    if (uploadedImage?.public_id) {
+      try {
+        await cloudinary.uploader.destroy(uploadedImage.public_id);
+      } catch (cleanupError) {
+        console.error("Cloudinary cleanup failed:", cleanupError);
+      }
+    }
+
+    throw error;
+  }
 });
 
 const deleteFacility = asyncHandler(async (req, res) => {
