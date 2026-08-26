@@ -17,7 +17,6 @@ import MyBookings from "../pages/user/MyBookings/MyBookings";
 import RegisterFacility from "../pages/user/RegisterFacility/RegisterFacility";
 
 import OwnerDashboard from "../pages/owner/Dashboard/Dashboard";
-import MyFacilities from "../pages/owner/MyFacilities/MyFacilities";
 import ManageFacility from "../pages/owner/ManageFacility/ManageFacility";
 import EditFacility from "../pages/owner/EditFacility/EditFacility";
 import FacilityBookings from "../pages/owner/FacilityBookings/FacilityBookings";
@@ -55,7 +54,6 @@ export default function AppRoutes() {
           {/* Owner */}
           <Route element={<OwnerRoute />}>
             <Route path="/owner" element={<OwnerDashboard />} />
-            <Route path="/owner/facilities" element={<MyFacilities />} />
             <Route
               path="/owner/facilities/:facilityId"
               element={<ManageFacility />}

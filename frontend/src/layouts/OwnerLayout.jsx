@@ -29,7 +29,7 @@ function OwnerLayout({ children }) {
           </span>
         </header>
 
-        <main>
+        <main className="pt-6 px-6 sm:px-8 lg:px-10 mx-auto">
           <Outlet />
         </main>
       </div>
