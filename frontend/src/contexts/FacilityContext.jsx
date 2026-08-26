@@ -13,6 +13,7 @@ const FacilityProvider = ({ children }) => {
   const [facilityDetails, setFacilityDetails] = useState(null);
   const [facilityBookings, setFacilityBookings] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   async function registerFacility(facilityData) {
     setLoading(true);
@@ -51,14 +52,14 @@ const FacilityProvider = ({ children }) => {
   }
 
   async function deleteFacility(facilityId) {
-    setLoading(true);
+    setDeleting(true);
 
     try {
       const res = await deleteFacilityRequest(facilityId);
       setFacilityDetails(null);
       return res;
     } finally {
-      setLoading(false);
+      setDeleting(false);
     }
   }
 
@@ -88,6 +89,8 @@ const FacilityProvider = ({ children }) => {
         getFacilityBookings,
         loading,
         setLoading,
+        deleting,
+        setDeleting,
       }}
     >
       {children}
