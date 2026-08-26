@@ -15,7 +15,10 @@ import {
   getAvailableLocations,
 } from "../controllers/facilities.controller.js";
 
-import { getFacilityBookings } from "../controllers/booking.controller.js";
+import {
+  getFacilityBookings,
+  getAllBookings,
+} from "../controllers/booking.controller.js";
 
 import {
   createFacilitySchema,
@@ -46,11 +49,14 @@ facilitiesRouter.route("/availableCategories").get(getAvailableCategories);
 
 facilitiesRouter.route("/availableLocations").get(getAvailableLocations);
 
+facilitiesRouter.route("/all-bookings").get(verifyJWT, getAllBookings);
+
 facilitiesRouter
   .route("/:facilityId")
   .get(validate(objectIdParamsSchema("facilityId"), "params"), getFacility)
   .patch(
     verifyJWT,
+    upload.single("facilityImage"),
     validate(objectIdParamsSchema("facilityId"), "params"),
     validate(editFacilitySchema),
     editFacility,

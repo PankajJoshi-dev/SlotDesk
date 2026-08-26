@@ -118,6 +118,27 @@ const createBooking = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, populatedBooking, "Slot booked successfully."));
 });
 
+const getAllBookings = asyncHandler(async (req, res) => {
+  if (!req.user.isFacilityOwner) {
+    throw new ApiError(
+      403,
+      "user",
+      "Access denied. You are not a facility owner.",
+    );
+  }
+
+  const facilities = await Facility.find({ owner: req.user._id }).select("_id");
+  const allBookings = await Booking.find({
+    facility: { $in: facilities.map((facility) => facility._id) },
+  }).populate(bookingPopulate);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, allBookings, "All bookings fetched successfully."),
+    );
+});
+
 const getFacilityBookings = asyncHandler(async (req, res) => {
   const facility = await Facility.findById(req.validatedParams.facilityId);
 
@@ -225,6 +246,7 @@ const cancelBooking = asyncHandler(async (req, res) => {
 
 export {
   createBooking,
+  getAllBookings,
   getFacilityBookings,
   getMyBookings,
   getSingleBooking,
