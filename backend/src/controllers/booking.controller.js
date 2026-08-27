@@ -3,6 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import Booking from "../models/booking.model.js";
 import Facility from "../models/facility.model.js";
+import generateBookingId from "../utils/generateBookingId.js";
 
 const bookingPopulate = [
   {
@@ -18,8 +19,9 @@ const bookingPopulate = [
 function buildBookingFilters(validatedQuery) {
   const filters = {};
 
+  if (validatedQuery.bookingId) filters.bookingId = validatedQuery.bookingId;
+  if (validatedQuery.date) filters.date = validatedQuery.date;
   if (validatedQuery.user) filters.user = validatedQuery.user;
-  if (validatedQuery.facility) filters.facility = validatedQuery.facility;
   if (validatedQuery.date) filters.date = validatedQuery.date;
   if (validatedQuery.slotIndex !== undefined) {
     filters.slotIndex = validatedQuery.slotIndex;
@@ -106,6 +108,9 @@ const createBooking = asyncHandler(async (req, res) => {
       );
     }
   }
+
+  // Add custom bookingId
+  bookingInfo.bookingId = generateBookingId();
 
   const booking = await Booking.create(bookingInfo);
 
