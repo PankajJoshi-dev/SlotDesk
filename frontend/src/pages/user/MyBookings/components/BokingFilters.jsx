@@ -9,29 +9,26 @@ function BookingFilters() {
 
   useEffect(() => {
     return () => {
-      setFilters({
-        status: "BOOKED",
-      });
+      setFilters({});
     };
   }, [setFilters]);
 
   const handleClick = (status) => {
-    setFilters((prev) => ({
-      ...prev,
+    setFilters({
       status: status,
       date: undefined,
-    }));
+    });
   };
 
   const filterClass = (status) =>
     `self-start shrink-0 rounded-full px-3 py-1 text-md text-text transition-all ${
-      filters?.status === status
+      (status !== undefined || filters?.date) && filters?.status === status
         ? "bg-primary"
         : "bg-primary/20 hover:bg-primary/30 hover:scale-102"
     }`;
 
   return (
-    <div className="overflow-x-auto mx-4 p-4 border-b border-border">
+    <div className="overflow-x-auto py-4 border-b border-border">
       <div className="flex flex-row justify-center-safe content-center gap-4">
         <span
           onClick={() =>

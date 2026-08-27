@@ -38,7 +38,11 @@ function BookingCard({ booking }) {
               {booking?.facility?.name}
             </h2>
 
-            <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+            <p className="mt-1 text-xs font-medium text-text-secondary">
+              Booking ID: {booking?.bookingId}
+            </p>
+
+            <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4 shrink-0" />
               <span>{booking?.facility?.address?.city}</span>
             </div>

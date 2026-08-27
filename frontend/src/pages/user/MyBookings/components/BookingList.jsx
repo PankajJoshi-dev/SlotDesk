@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 import { useMyBooking } from "../../../../contexts/MyBookingContext";
 
@@ -8,11 +9,27 @@ import BookingCard from "./BookingCard";
 function BookingList() {
   const { bookingId } = useParams();
 
-  const { filters, getMyBookings, loading, mybookings } = useMyBooking();
+  const { filters, getMyBookings, loading, mybookings, setMyBookings } =
+    useMyBooking();
+  const [fetchError, setFetchError] = useState(null);
 
   // Fetch bookings whenever filters are changed
   useEffect(() => {
-    getMyBookings();
+    const fetchBookings = async () => {
+      setFetchError(null);
+
+      try {
+        await getMyBookings();
+      } catch (error) {
+        const message =
+          error.response?.data?.message || "Unable to fetch bookings.";
+        setMyBookings([]);
+        setFetchError(message);
+        toast.error(message);
+      }
+    };
+
+    fetchBookings();
   }, [filters]);
 
   // Scroll into view
@@ -31,14 +48,32 @@ function BookingList() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[70vh]">
+      <p className="py-10 text-center text-sm text-text-secondary">
         Loading...
-      </div>
+      </p>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <p className="py-10 text-center text-sm text-text-secondary">
+        {fetchError}
+      </p>
+    );
+  }
+
+  if (!mybookings?.length) {
+    return (
+      <p className="py-10 text-center text-sm text-text-secondary">
+        {bookingId
+          ? "The requested booking was not found."
+          : "No bookings found."}
+      </p>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 my-6 mx-4">
+    <div className="mt-4 flex flex-col gap-4">
       {mybookings.map((booking) => {
         const isSelected = booking._id === bookingId;
 
