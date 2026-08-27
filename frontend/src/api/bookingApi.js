@@ -21,8 +21,10 @@ const getMyBookingsRequest = async (filters) => {
   return response.data;
 };
 
-const getSingleBookingRequest = async (bookingId) => {
-  const response = await api.get(`/bookings/${bookingId}`);
+const getSingleBookingRequest = async (customBookingId) => {
+  const response = await api.get(`/bookings`, {
+    params: { bookingId: customBookingId },
+  });
   log(response.data);
   return response.data;
 };

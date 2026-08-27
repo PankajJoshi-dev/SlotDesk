@@ -37,8 +37,10 @@ const facilityDetailsRequest = async (facilityId) => {
   return response.data;
 };
 
-const getFacilityBookingsRequest = async (facilityId) => {
-  const response = await api.get(`/facilities/${facilityId}/bookings`);
+const getFacilityBookingsRequest = async (facilityId, filters) => {
+  const response = await api.get(`/facilities/${facilityId}/bookings`, {
+    params: filters,
+  });
   log(response.data);
   return response.data;
 };

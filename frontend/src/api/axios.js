@@ -17,6 +17,7 @@ api.interceptors.response.use(
       window.location.href = "/404";
       return Promise.reject(error);
     }
+
     if (status === 400 || status === 401) {
       console.log(error.response);
       return Promise.reject(error);

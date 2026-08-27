@@ -11,7 +11,10 @@ const FacilityContext = createContext();
 
 const FacilityProvider = ({ children }) => {
   const [facilityDetails, setFacilityDetails] = useState(null);
+
+  const [filters, setFilters] = useState({});
   const [facilityBookings, setFacilityBookings] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -63,11 +66,11 @@ const FacilityProvider = ({ children }) => {
     }
   }
 
-  async function getFacilityBookings(facilityId) {
+  async function getFacilityBookings(facilityId, filters) {
     setLoading(true);
 
     try {
-      const res = await getFacilityBookingsRequest(facilityId);
+      const res = await getFacilityBookingsRequest(facilityId, filters);
       setFacilityBookings(res?.data ?? []);
       return res;
     } finally {
@@ -80,6 +83,8 @@ const FacilityProvider = ({ children }) => {
       value={{
         facilityDetails,
         setFacilityDetails,
+        filters,
+        setFilters,
         facilityBookings,
         setFacilityBookings,
         registerFacility,

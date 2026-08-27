@@ -8,7 +8,7 @@ const MyBookingProvider = ({ children }) => {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  const [filters, setFilters] = useState({ status: "BOOKED" });
+  const [filters, setFilters] = useState({});
   const [mybookings, setMyBookings] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -44,6 +44,7 @@ const MyBookingProvider = ({ children }) => {
         filters,
         setFilters,
         mybookings,
+        setMyBookings,
         loading,
         getMyBookings,
         cancelBooking,
