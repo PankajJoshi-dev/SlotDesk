@@ -26,7 +26,7 @@ import {
   filterFacilitiesSchema,
   getFacilitySlotsSchema,
 } from "../validators/facilities.validator.js";
-import { getFacilityBookingsQuerySchema } from "../validators/booking.validator.js";
+import { getBookingsQuerySchema } from "../validators/booking.validator.js";
 import { objectIdParamsSchema } from "../validators/common.validator.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
@@ -72,7 +72,7 @@ facilitiesRouter
   .get(
     verifyJWT,
     validate(objectIdParamsSchema("facilityId"), "params"),
-    validate(getFacilityBookingsQuerySchema, "query"),
+    validate(getBookingsQuerySchema, "query"),
     getFacilityBookings,
   );
 

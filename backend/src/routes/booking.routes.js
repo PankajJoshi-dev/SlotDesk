@@ -13,7 +13,10 @@ import {
 } from "../validators/booking.validator.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
-import { objectIdParamsSchema } from "../validators/common.validator.js";
+import {
+  bookingIdSchema,
+  objectIdParamsSchema,
+} from "../validators/common.validator.js";
 
 const bookingRouter = Router();
 
@@ -32,11 +35,6 @@ bookingRouter
 
 bookingRouter
   .route("/:bookingId")
-  .get(
-    verifyJWT,
-    validate(objectIdParamsSchema("bookingId"), "params"),
-    getSingleBooking,
-  )
   .patch(
     verifyJWT,
     validate(objectIdParamsSchema("bookingId"), "params"),

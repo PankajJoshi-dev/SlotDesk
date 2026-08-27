@@ -10,6 +10,15 @@ const objectIdParamsSchema = (paramName) =>
     [paramName]: objectIdSchema,
   });
 
+const bookingIdSchema = z
+  .string()
+  .trim()
+  .regex(/^BK-[A-F0-9]{8}$/, {
+    error: "Invalid booking ID.",
+  });
+
+export default bookingIdSchema;
+
 const dateSchema = z.coerce
   .date({ error: "Date is required." })
   .transform((date) => {
@@ -24,4 +33,10 @@ const bookingDateSchema = dateSchema.refine(
   },
 );
 
-export { objectIdSchema, objectIdParamsSchema, dateSchema, bookingDateSchema };
+export {
+  objectIdSchema,
+  objectIdParamsSchema,
+  bookingIdSchema,
+  dateSchema,
+  bookingDateSchema,
+};

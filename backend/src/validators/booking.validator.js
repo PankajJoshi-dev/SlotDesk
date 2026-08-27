@@ -3,6 +3,7 @@ import {
   objectIdSchema,
   dateSchema,
   bookingDateSchema,
+  bookingIdSchema,
 } from "./common.validator.js";
 
 const bookingCreationSchema = z.object({
@@ -25,25 +26,21 @@ const bookingCreationSchema = z.object({
 });
 
 const getBookingsQuerySchema = z.object({
-  user: objectIdSchema.optional(),
+  bookingId: bookingIdSchema.optional(),
 
-  facility: objectIdSchema.optional(),
+  user: objectIdSchema.optional(),
 
   date: dateSchema.optional(),
 
   slotIndex: z.coerce.number().int().min(0).optional(),
 
-  status: z.enum(["BOOKED", "CANCELLED", "COMPLETED", "NO_SHOW"]).optional(),
+  status: z.enum(["BOOKED", "CANCELLED", "COMPLETED"]).optional(),
 });
 
-const getFacilityBookingsQuerySchema = getBookingsQuerySchema.omit({
-  facility: true,
-});
 const getMyBookingsQuerySchema = getBookingsQuerySchema.omit({ user: true });
 
 export {
   bookingCreationSchema,
   getBookingsQuerySchema,
-  getFacilityBookingsQuerySchema,
   getMyBookingsQuerySchema,
 };
