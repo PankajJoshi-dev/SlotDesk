@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAvailableCategoriesRequest } from "../../../../api/searchApi";
 import { useSearch } from "../../../../contexts/SearchContext";
 
 function FilterSection() {
   const { filters, setFilters } = useSearch();
-
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -20,11 +19,16 @@ function FilterSection() {
     fetchAvailabeCategories();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      setFilters({});
+    };
+  }, [setFilters]);
+
   const handleClick = (cat) => {
-    setFilters((prev) => ({
-      ...prev,
+    setFilters({
       category: cat,
-    }));
+    });
   };
 
   const filterClass = (category) =>
@@ -45,7 +49,7 @@ function FilterSection() {
   ));
 
   return (
-    <div className="overflow-x-auto p-4 border-b border-border">
+    <div className="overflow-x-auto py-4 border-b border-border">
       <div className="flex flex-row justify-center-safe content-center gap-4">
         {catPills}
       </div>

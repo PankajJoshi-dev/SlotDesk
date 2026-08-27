@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearch } from "../../../../contexts/SearchContext";
 import { useNavigate } from "react-router-dom";
 
@@ -6,19 +6,25 @@ function SearchBar() {
   const navigate = useNavigate();
 
   const { filters, setFilters } = useSearch();
-  const [keyWord, setKeyWord] = useState(filters.search ?? "");
+  const [keyWord, setKeyWord] = useState("");
+
+  useEffect(() => {
+    setKeyWord(filters.search ?? "");
+  }, [filters.search]);
 
   const inputClass = `w-48 sm:w-60 md:w-72 border rounded px-3 py-2 transition-colors outline-none focus:border-white/80 focus:ring-1 focus:ring-white/80 text-text text-sm border-border`;
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    setFilters((prev) => ({
-      ...prev,
-      search: keyWord.trim(),
-    }));
+    const search = keyWord.trim();
 
-    navigate("/facilities");
+    setFilters(() => {
+      if (search) {
+        return { search: search };
+      }
+      return { search: undefined };
+    });
   };
 
   return (
