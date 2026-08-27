@@ -1,22 +1,55 @@
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useSearch } from "../../../../contexts/SearchContext";
-
 import FacilityCard from "./FacilityCard";
 
 function FacilityList() {
-  const { filters, facilities, loading, fetchFacilities } = useSearch();
+  const { filters, facilities, loading, fetchFacilities, setFacilities } =
+    useSearch();
+  const [fetchError, setFetchError] = useState(null);
 
   // Fetch facilities whenever the filter changes
   useEffect(() => {
-    fetchFacilities();
+    const loadFacilities = async () => {
+      setFetchError(null);
+
+      try {
+        await fetchFacilities();
+      } catch (error) {
+        const message =
+          error.response?.data?.message || "Unable to fetch facilities.";
+        setFacilities([]);
+        setFetchError(message);
+        toast.error(message);
+      }
+    };
+
+    loadFacilities();
   }, [filters]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[70vh]">
+      <p className="py-10 text-center text-sm text-text-secondary">
         Loading...
-      </div>
+      </p>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <p className="py-10 text-center text-sm text-text-secondary">
+        {fetchError}
+      </p>
+    );
+  }
+
+  if (!facilities?.length) {
+    return (
+      <p className="py-10 text-center text-sm text-text-secondary">
+        {filters.search
+          ? `No facilities found for "${filters.search}".`
+          : "No facilities found."}
+      </p>
     );
   }
 
