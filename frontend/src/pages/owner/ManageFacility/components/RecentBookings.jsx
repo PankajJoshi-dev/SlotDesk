@@ -42,6 +42,9 @@ function RecentBoookings({ facilityId, activeBookings, loading }) {
                 <p className="truncate text-sm font-medium">
                   {booking.user?.fullName ?? "Guest"}
                 </p>
+                <p className="mt-1 truncate text-xs font-medium text-primary">
+                  {booking.bookingId}
+                </p>
                 <p className="mt-1 text-xs text-text-secondary">
                   {booking.partySize}{" "}
                   {booking.partySize === 1 ? "guest" : "guests"}
