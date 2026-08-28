@@ -229,7 +229,7 @@ const getSingleBooking = asyncHandler(async (req, res) => {
 const cancelBooking = asyncHandler(async (req, res) => {
   const { bookingId } = req.validatedParams;
 
-  const booking = await Booking.findById(bookingId);
+  const booking = await Booking.findById(bookingId).populate("facility");
 
   if (!booking) {
     throw new ApiError(404, "bookingId", "Booking not found.");
@@ -237,6 +237,47 @@ const cancelBooking = asyncHandler(async (req, res) => {
 
   if (!booking.user.equals(req.user._id)) {
     throw new ApiError(403, "bookingId", "Access denied.");
+  }
+
+  if (booking.status !== "BOOKED") {
+    throw new ApiError(
+      409,
+      "bookingId",
+      "Only booked reservations can be cancelled.",
+    );
+  }
+
+  if (booking.checkedIn) {
+    throw new ApiError(
+      409,
+      "bookingId",
+      "Checked-in bookings cannot be cancelled.",
+    );
+  }
+
+  const bookingDate = new Date(booking.date);
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  if (bookingDate < today) {
+    throw new ApiError(409, "bookingId", "Past bookings cannot be cancelled.");
+  }
+
+  if (bookingDate.getTime() === today.getTime()) {
+    const startTime =
+      booking.facility.openingTime +
+      booking.slotIndex * booking.facility.slotDuration;
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+    if (currentTime >= startTime - 30) {
+      throw new ApiError(
+        409,
+        "bookingId",
+        "Bookings can only be cancelled at least 30 minutes before the slot.",
+      );
+    }
   }
 
   booking.status = "CANCELLED";
