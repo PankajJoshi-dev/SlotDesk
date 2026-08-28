@@ -6,6 +6,7 @@ import {
   facilityDetailsRequest,
   getFacilityBookingsRequest,
 } from "../api/facilityApi";
+import { checkInRequest } from "../api/bookingApi";
 
 const FacilityContext = createContext();
 
@@ -17,6 +18,7 @@ const FacilityProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [checkingIn, setCheckingIn] = useState(false);
 
   async function registerFacility(facilityData) {
     setLoading(true);
@@ -78,6 +80,25 @@ const FacilityProvider = ({ children }) => {
     }
   }
 
+  async function checkIn(bookingId) {
+    setCheckingIn(true);
+
+    try {
+      const res = await checkInRequest(bookingId);
+
+      const updatedBooking = res?.data;
+      setFacilityBookings((prev) =>
+        prev.map((booking) =>
+          booking._id === updatedBooking._id ? updatedBooking : booking,
+        ),
+      );
+
+      return res;
+    } finally {
+      setCheckingIn(false);
+    }
+  }
+
   return (
     <FacilityContext.Provider
       value={{
@@ -92,10 +113,13 @@ const FacilityProvider = ({ children }) => {
         editFacility,
         deleteFacility,
         getFacilityBookings,
+        checkIn,
         loading,
         setLoading,
         deleting,
         setDeleting,
+        checkingIn,
+        setCheckingIn,
       }}
     >
       {children}

@@ -35,9 +35,16 @@ const cancelBookingRequest = async (bookingId) => {
   return response.data;
 };
 
+const checkInRequest = async (bookingId) => {
+  const response = await api.patch(`/bookings/${bookingId}/check-in`);
+  log(response.data);
+  return response.data;
+};
+
 export {
   bookingRequest,
   getMyBookingsRequest,
   getSingleBookingRequest,
   cancelBookingRequest,
+  checkInRequest,
 };
