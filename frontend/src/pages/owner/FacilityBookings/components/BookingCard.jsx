@@ -1,10 +1,13 @@
-import { CalendarDays, Clock3, Users, MapPin } from "lucide-react";
+import { CalendarDays, Clock3, Users, MapPin, CircleCheck } from "lucide-react";
 
 import getFacilityIcon from "../../../../utils/FacilityIcons";
 import formatTime from "../../../../utils/formatTIme";
 import formatDate from "../../../../utils/formatDate";
+import { useFacility } from "../../../../contexts/FacilityContext";
 
 function BookingCard({ booking }) {
+  const { checkIn, checkingIn } = useFacility();
+
   const statusStyles = {
     BOOKED: "bg-green-300 text-green-700 border-green-200",
     COMPLETED: "bg-blue-300 text-blue-700 border-blue-200",
@@ -18,6 +21,12 @@ function BookingCard({ booking }) {
     booking?.slotIndex * booking?.facility?.slotDuration;
 
   const endTime = startTime + booking?.facility?.slotDuration;
+
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+
+  const slotActive = startTime <= currentTime && currentTime < endTime;
+  const canCheckIn = booking.status === "BOOKED";
 
   return (
     <div className="w-full rounded-2xl bg-card px-6 py-5 shadow-sm transition-all hover:shadow-md">
@@ -68,7 +77,7 @@ function BookingCard({ booking }) {
             </div>
 
             <span
-              className={`rounded-full border px-4 py-3 text-xs font-semibold ${statusStyles[booking?.status]}`}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${statusStyles[booking?.status]}`}
             >
               {booking?.status}
             </span>
@@ -76,9 +85,23 @@ function BookingCard({ booking }) {
         </div>
       </div>
 
-      <p className="mt-4 text-xs text-text-secondary lg:ml-14">
-        Booked on {formatDate(booking?.createdAt)}
-      </p>
+      <div className=" mt-4 md:mt-0 flex flex-row justify-between items-center">
+        <p className="text-xs text-text-secondary py-2 lg:ml-14">
+          Booked on {formatDate(booking?.createdAt)}
+        </p>
+
+        {booking?.checkedIn ? (
+          <CircleCheck size={20} className="text-green-500" />
+        ) : canCheckIn && slotActive ? (
+          <button
+            disabled={checkingIn}
+            onClick={() => checkIn(booking._id)}
+            className="flex items-center gap-2 rounded-lg border border-green-300 px-4 py-2 text-sm font-semibold text-green-500 transition-colors hover:bg-green-300 hover:text-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Check In
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }
