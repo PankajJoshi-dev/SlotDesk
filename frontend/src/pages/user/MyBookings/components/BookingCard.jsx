@@ -7,7 +7,7 @@ import formatDate from "../../../../utils/formatDate";
 import { useMyBooking } from "../../../../contexts/MyBookingContext";
 
 function BookingCard({ booking }) {
-  const { cancelBooking } = useMyBooking();
+  const { cancelBooking, cancellingBookingId } = useMyBooking();
 
   const statusStyles = {
     BOOKED: "bg-green-300 text-green-700 border-green-200",
@@ -23,7 +23,21 @@ function BookingCard({ booking }) {
 
   const endTime = startTime + booking?.facility?.slotDuration;
 
-  const canCancel = booking?.status === "BOOKED";
+  const bookingDate = new Date(booking?.date);
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+  const isToday = bookingDate.getTime() === today.getTime();
+  const isFutureDate = bookingDate.getTime() > today.getTime();
+
+  const canCancel =
+    booking?.status === "BOOKED" &&
+    !booking.checkedIn &&
+    (isFutureDate || (isToday && currentTime < startTime - 30));
+  const isCancelling = cancellingBookingId === booking?._id;
 
   return (
     <div className="w-full rounded-2xl bg-card px-6 py-5 shadow-sm transition-all hover:shadow-md">
@@ -74,27 +88,31 @@ function BookingCard({ booking }) {
             </div>
 
             <span
-              className={`rounded-full border px-4 py-3 text-xs font-semibold ${statusStyles[booking?.status]}`}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${statusStyles[booking?.status]}`}
             >
               {booking?.status}
             </span>
-
-            {canCancel && (
-              <button
-                className="flex items-center gap-2 rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
-                onClick={() => cancelBooking(booking._id)}
-              >
-                <Trash2 className="h-4 w-4" />
-                Cancel
-              </button>
-            )}
           </div>
         </div>
       </div>
 
-      <p className="mt-4 text-xs text-text-secondary lg:ml-14">
-        Booked on {formatDate(booking?.createdAt)}
-      </p>
+      <div className="mt-4 md:mt-0 flex items-center justify-between ">
+        <p className="text-xs text-text-secondary py-2 lg:ml-14">
+          Booked on {formatDate(booking?.createdAt)}
+        </p>
+
+        {canCancel && (
+          <button
+            type="button"
+            disabled={isCancelling}
+            className="flex items-center gap-2 rounded-lg border border-red-400 px-4 py-2 text-sm font-semibold text-red-500 transition-colors hover:bg-red-400 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={() => cancelBooking(booking._id)}
+          >
+            <Trash2 className="h-4 w-4" />
+            Cancel
+          </button>
+        )}
+      </div>
     </div>
   );
 }

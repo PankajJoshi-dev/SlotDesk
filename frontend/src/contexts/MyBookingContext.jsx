@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { getMyBookingsRequest, cancelBookingRequest } from "../api/bookingApi";
 import { toast } from "sonner";
+import { BookKey } from "lucide-react";
 
 const MyBookingContext = createContext();
 
@@ -11,6 +12,7 @@ const MyBookingProvider = ({ children }) => {
   const [filters, setFilters] = useState({});
   const [mybookings, setMyBookings] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [cancellingBookingId, setCancellingBookingId] = useState(null);
 
   async function getMyBookings() {
     setLoading(true);
@@ -24,17 +26,21 @@ const MyBookingProvider = ({ children }) => {
   }
 
   async function cancelBooking(bookingId) {
-    setLoading(true);
+    setCancellingBookingId(bookingId);
 
     try {
       const res = await cancelBookingRequest(bookingId);
 
-      if (res.success) {
-        await getMyBookings();
-        toast.success("Booking Cancelled.");
-      }
+      const cancelledBooking = res?.data;
+      setMyBookings((prev) =>
+        prev.map((booking) =>
+          booking._id === cancelledBooking._id ? cancelledBooking : booking,
+        ),
+      );
+
+      return res;
     } finally {
-      setLoading(false);
+      setCancellingBookingId(null);
     }
   }
 
@@ -46,6 +52,7 @@ const MyBookingProvider = ({ children }) => {
         mybookings,
         setMyBookings,
         loading,
+        cancellingBookingId,
         getMyBookings,
         cancelBooking,
       }}
