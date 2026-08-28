@@ -42,6 +42,11 @@ const bookingSchema = new mongoose.Schema(
       enum: ["BOOKED", "CANCELLED", "COMPLETED"],
       default: "BOOKED",
     },
+
+    checkedIn: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
