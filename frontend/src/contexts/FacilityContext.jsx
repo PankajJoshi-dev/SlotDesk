@@ -18,7 +18,7 @@ const FacilityProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [checkingIn, setCheckingIn] = useState(false);
+  const [checkingInBookingId, setCheckingInBookingId] = useState(null);
 
   async function registerFacility(facilityData) {
     setLoading(true);
@@ -81,7 +81,7 @@ const FacilityProvider = ({ children }) => {
   }
 
   async function checkIn(bookingId) {
-    setCheckingIn(true);
+    setCheckingInBookingId(bookingId);
 
     try {
       const res = await checkInRequest(bookingId);
@@ -95,7 +95,7 @@ const FacilityProvider = ({ children }) => {
 
       return res;
     } finally {
-      setCheckingIn(false);
+      setCheckingInBookingId(null);
     }
   }
 
@@ -118,8 +118,7 @@ const FacilityProvider = ({ children }) => {
         setLoading,
         deleting,
         setDeleting,
-        checkingIn,
-        setCheckingIn,
+        checkingInBookingId,
       }}
     >
       {children}
