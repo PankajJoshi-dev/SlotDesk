@@ -3,8 +3,8 @@ import verifyJWT from "../middlewares/auth.middleware.js";
 import {
   createBooking,
   getMyBookings,
-  getSingleBooking,
   cancelBooking,
+  checkIn,
 } from "../controllers/booking.controller.js";
 
 import {
@@ -13,16 +13,21 @@ import {
 } from "../validators/booking.validator.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
-import {
-  bookingIdSchema,
-  objectIdParamsSchema,
-} from "../validators/common.validator.js";
+import { objectIdParamsSchema } from "../validators/common.validator.js";
 
 const bookingRouter = Router();
 
 bookingRouter
   .route("/me")
   .get(verifyJWT, validate(getMyBookingsQuerySchema, "query"), getMyBookings);
+
+bookingRouter
+  .route("/:bookingId/check-in")
+  .patch(
+    verifyJWT,
+    validate(objectIdParamsSchema("bookingId"), "params"),
+    checkIn,
+  );
 
 bookingRouter
   .route("/:facilityId")

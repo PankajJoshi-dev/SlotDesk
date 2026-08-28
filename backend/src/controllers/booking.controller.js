@@ -12,7 +12,7 @@ const bookingPopulate = [
   },
   {
     path: "facility",
-    select: "name slotDuration address.city openingTime category",
+    select: "name slotDuration address.city openingTime category owner",
   },
 ];
 
@@ -22,7 +22,6 @@ function buildBookingFilters(validatedQuery) {
   if (validatedQuery.bookingId) filters.bookingId = validatedQuery.bookingId;
   if (validatedQuery.date) filters.date = validatedQuery.date;
   if (validatedQuery.user) filters.user = validatedQuery.user;
-  if (validatedQuery.date) filters.date = validatedQuery.date;
   if (validatedQuery.slotIndex !== undefined) {
     filters.slotIndex = validatedQuery.slotIndex;
   }
@@ -249,6 +248,77 @@ const cancelBooking = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, booking, "Booking cancelled successfully."));
 });
 
+const checkIn = asyncHandler(async (req, res) => {
+  const { bookingId } = req.validatedParams;
+
+  if (!req.user.isFacilityOwner) {
+    throw new ApiError(
+      403,
+      "user",
+      "Access denied. You are not a facility owner.",
+    );
+  }
+
+  const booking = await Booking.findById(bookingId).populate(bookingPopulate);
+
+  if (!booking) {
+    throw new ApiError(404, "booking", "Booking does not exist.");
+  }
+
+  if (!booking.facility.owner.equals(req.user._id)) {
+    throw new ApiError(
+      403,
+      "facilityId",
+      "Access denied. You are not the owner of this facility.",
+    );
+  }
+
+  if (booking.status === "CANCELLED") {
+    throw new ApiError(
+      409,
+      "booking",
+      "Cancelled bookings cannot be checked in.",
+    );
+  }
+
+  if (booking.status === "COMPLETED") {
+    throw new ApiError(
+      409,
+      "booking",
+      "This booking has already been completed.",
+    );
+  }
+
+  if (booking.checkedIn) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, booking, "Already checked in."));
+  }
+
+  const now = new Date();
+  const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
+
+  const currentOngoingSlot = Math.floor(
+    (minutesSinceMidnight - booking.facility.openingTime) /
+      booking.facility.slotDuration,
+  );
+
+  if (currentOngoingSlot !== booking.slotIndex) {
+    throw new ApiError(
+      409,
+      "booking",
+      "Booking can only be checked in during the scheduled slot.",
+    );
+  }
+
+  booking.checkedIn = true;
+  await booking.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, booking, "Checked in successfully."));
+});
+
 export {
   createBooking,
   getAllBookings,
@@ -256,4 +326,5 @@ export {
   getMyBookings,
   getSingleBooking,
   cancelBooking,
+  checkIn,
 };
