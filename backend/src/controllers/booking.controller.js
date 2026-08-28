@@ -295,6 +295,20 @@ const checkIn = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, booking, "Already checked in."));
   }
 
+  const dueDate = new Date(booking?.date);
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const isToday = dueDate.getTime() === today.getTime();
+
+  if (!isToday) {
+    throw new ApiError(
+      409,
+      "booking",
+      "Booking can only be checked in on the scheduled day.",
+    );
+  }
+
   const now = new Date();
   const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
 

@@ -6,7 +6,7 @@ import formatDate from "../../../../utils/formatDate";
 import { useFacility } from "../../../../contexts/FacilityContext";
 
 function BookingCard({ booking }) {
-  const { checkIn, checkingIn } = useFacility();
+  const { checkingInBookingId, checkIn } = useFacility();
 
   const statusStyles = {
     BOOKED: "bg-green-300 text-green-700 border-green-200",
@@ -22,11 +22,19 @@ function BookingCard({ booking }) {
 
   const endTime = startTime + booking?.facility?.slotDuration;
 
+  const dueDate = new Date(booking?.date);
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const isToday = dueDate.getTime() === today.getTime();
+
   const now = new Date();
   const currentTime = now.getHours() * 60 + now.getMinutes();
 
-  const slotActive = startTime <= currentTime && currentTime < endTime;
+  const slotActive =
+    isToday && startTime <= currentTime && currentTime < endTime;
   const canCheckIn = booking.status === "BOOKED";
+  const isCheckingIn = checkingInBookingId === booking?._id;
 
   return (
     <div className="w-full rounded-2xl bg-card px-6 py-5 shadow-sm transition-all hover:shadow-md">
@@ -94,7 +102,7 @@ function BookingCard({ booking }) {
           <CircleCheck size={20} className="text-green-500" />
         ) : canCheckIn && slotActive ? (
           <button
-            disabled={checkingIn}
+            disabled={isCheckingIn}
             onClick={() => checkIn(booking._id)}
             className="flex items-center gap-2 rounded-lg border border-green-300 px-4 py-2 text-sm font-semibold text-green-500 transition-colors hover:bg-green-300 hover:text-green-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
