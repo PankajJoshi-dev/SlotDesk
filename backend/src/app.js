@@ -7,7 +7,7 @@ import errorHandler from "./middlewares/errorHandler.middleware.js";
 import authRouter from "../src/routes/auth.routes.js";
 import facilitiesRouter from "./routes/facilities.routes.js";
 import bookingRouter from "./routes/booking.routes.js";
-import paymentRouter from "./models/payment.routes.js";
+import paymentRouter from "./routes/payment.routes.js";
 
 import cors from "cors";
 
