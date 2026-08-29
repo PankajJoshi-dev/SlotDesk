@@ -24,6 +24,7 @@ function EditFacility() {
     openingTime: "",
     closingTime: "",
     slotDuration: "",
+    slotPrice: "",
     workingDays: [],
     facilityImage: null,
   });
@@ -55,6 +56,7 @@ function EditFacility() {
       openingTime: minutesToTime(facilityDetails.openingTime),
       closingTime: minutesToTime(facilityDetails.closingTime),
       slotDuration: facilityDetails.slotDuration || "",
+      slotPrice: facilityDetails.slotPrice || "",
       workingDays: facilityDetails.workingDays || [],
       facilityImage: null,
     });
@@ -134,6 +136,7 @@ function EditFacility() {
       openingTime,
       closingTime,
       slotDuration,
+      slotPrice,
       workingDays,
       facilityImage,
     } = formData;
@@ -180,6 +183,10 @@ function EditFacility() {
       newErrors.slotDuration = "Select a slot duration.";
     }
 
+    if (!slotPrice || Number(slotPrice) < 1) {
+      newErrors.slotPrice = "Price must be greater than 0.";
+    }
+
     if (workingDays.length === 0) {
       newErrors.workingDays = "Select at least one working day.";
     }
@@ -206,6 +213,7 @@ function EditFacility() {
       data.append("openingTime", toMinutes(openingTime));
       data.append("closingTime", toMinutes(closingTime));
       data.append("slotDuration", Number(slotDuration));
+      data.append("slotPrice", Number(slotPrice));
 
       workingDays.forEach((day) => {
         data.append("workingDays", day);
@@ -537,26 +545,61 @@ function EditFacility() {
             htmlFor="slotDuration"
             className="font-semibold text-xs text-text"
           >
-            Slot Duration
+            Slot
           </label>
 
-          <select
-            id="slotDuration"
-            name="slotDuration"
-            className={inputClass("slotDuration")}
-            value={formData.slotDuration}
-            onChange={handleChange}
-          >
-            <option value="">Select slot duration</option>
-            <option value="15">15 minutes</option>
-            <option value="30">30 minutes</option>
-            <option value="45">45 minutes</option>
-            <option value="60">1 hour</option>
-          </select>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="slotDuration"
+                className="text-xs text-text-secondary"
+              >
+                Duration
+              </label>
 
-          {errors.slotDuration && (
-            <p className="text-sm text-error">{errors.slotDuration}</p>
-          )}
+              <select
+                id="slotDuration"
+                name="slotDuration"
+                className={inputClass("slotDuration")}
+                value={formData.slotDuration}
+                onChange={handleChange}
+              >
+                <option value="">Select slot duration</option>
+                <option value="15">15 minutes</option>
+                <option value="30">30 minutes</option>
+                <option value="45">45 minutes</option>
+                <option value="60">1 hour</option>
+              </select>
+
+              {errors.slotDuration && (
+                <p className="text-sm text-error">{errors.slotDuration}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="slotPrice"
+                className="text-xs text-text-secondary"
+              >
+                Price per slot
+              </label>
+
+              <input
+                type="number"
+                id="slotPrice"
+                name="slotPrice"
+                min="1"
+                className={inputClass("slotPrice")}
+                placeholder="e.g. 100"
+                value={formData.slotPrice}
+                onChange={handleChange}
+              />
+
+              {errors.slotPrice && (
+                <p className="text-sm text-error">{errors.slotPrice}</p>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col gap-1">
