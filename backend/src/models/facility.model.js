@@ -116,6 +116,12 @@ const facilitySchema = new mongoose.Schema(
       default: 60,
     },
 
+    slotPrice: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+
     workingDays: {
       type: [
         {
@@ -133,12 +139,6 @@ const facilitySchema = new mongoose.Schema(
       ],
       default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     },
-
-    closedDates: [
-      {
-        type: Date,
-      },
-    ],
 
     isActive: {
       type: Boolean,

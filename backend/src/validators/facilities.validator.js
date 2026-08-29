@@ -113,11 +113,14 @@ const facilitySchema = z.object({
     .min(15, "Slot duration must be at least 15 minutes.")
     .max(60, "Slot duration cannot exceed 60 minutes."),
 
+  slotPrice: z.coerce
+    .number({ error: "Slot price is required." })
+    .int()
+    .min(1, "Price must be greater than 0."),
+
   workingDays: z
     .array(z.enum(DAYS))
     .default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]),
-
-  closedDates: z.array(dateSchema).default([]),
 
   isActive: z.preprocess((value) => {
     if (value === undefined || value === "") return undefined;
