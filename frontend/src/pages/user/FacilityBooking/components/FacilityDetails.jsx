@@ -33,15 +33,14 @@ function FacilityDetails({ facilityId }) {
         <div>
           <h1 className="text-xl font-semibold">{facilityDetails?.name}</h1>
 
-          <div className="flex flex-row items-center gap-2">
-            <MapPin className="h-4 w-4 text-primary" />
+          <div className="mt-1 flex items-center gap-2">
+            <MapPin className="h-4 w-4 text-text-muted" />
             <p className="text-sm text-text-muted">
-              {facilityDetails?.address?.city}
+              {`${facilityDetails?.address?.city}, ${facilityDetails?.address?.state}`}
             </p>
           </div>
         </div>
 
-        {/* Facility Details */}
         <div className="text-sm rounded-xl border border-border-light bg-card divide-y divide-border-light">
           <div className="flex items-center gap-2 px-4 py-3">
             <Building2 className="h-4 w-4 text-primary" />
@@ -50,7 +49,7 @@ function FacilityDetails({ facilityId }) {
 
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
-              <CircleCheck className="h-4 w-4 text-primary " />
+              <CircleCheck className="h-4 w-4 text-primary" />
               <span>Status</span>
             </div>
 
@@ -67,7 +66,7 @@ function FacilityDetails({ facilityId }) {
 
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
-              <Users className="h-4 w-4 text-primary " />
+              <Users className="h-4 w-4 text-primary" />
               <span>Capacity</span>
             </div>
 
@@ -78,7 +77,27 @@ function FacilityDetails({ facilityId }) {
 
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
-              <Clock className="h-4 w-4 text-primary " />
+              <Clock className="h-4 w-4 text-primary" />
+              <span>Slot Duration</span>
+            </div>
+
+            <span className="font-medium">
+              {facilityDetails?.slotDuration} minutes
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center gap-3">
+              <Clock className="h-4 w-4 text-primary" />
+              <span>Price per Slot</span>
+            </div>
+
+            <span className="font-medium">₹{facilityDetails?.slotPrice}</span>
+          </div>
+
+          <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center gap-3">
+              <Clock className="h-4 w-4 text-primary" />
               <span>Opens</span>
             </div>
 
@@ -89,7 +108,7 @@ function FacilityDetails({ facilityId }) {
 
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
-              <Clock className="h-4 w-4 text-primary " />
+              <Clock className="h-4 w-4 text-primary" />
               <span>Closes</span>
             </div>
 
@@ -97,9 +116,28 @@ function FacilityDetails({ facilityId }) {
               {formatTime(facilityDetails?.closingTime)}
             </span>
           </div>
+
+          <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center gap-3">
+              <Building2 className="h-4 w-4 text-primary" />
+              <span>Category</span>
+            </div>
+
+            <span className="font-medium">{facilityDetails?.category}</span>
+          </div>
+
+          <div className="flex items-center justify-between gap-4 px-4 py-3">
+            <div className="flex items-center gap-3 shrink-0">
+              <MapPin className="h-4 w-4 text-primary" />
+              <span>Address</span>
+            </div>
+
+            <span className="font-medium text-right">
+              {`${facilityDetails?.address?.city}, ${facilityDetails?.address?.state} - ${facilityDetails?.address?.pinCode}`}
+            </span>
+          </div>
         </div>
 
-        {/* Owner */}
         <div className="rounded-xl border border-border-light bg-card">
           <div className="flex items-center gap-2 border-b border-border-light px-4 py-3">
             <User className="h-4 w-4 text-primary" />
@@ -109,9 +147,7 @@ function FacilityDetails({ facilityId }) {
           <div className="space-y-1 px-4 py-4">
             <p className="font-medium">{facilityDetails?.owner?.fullName}</p>
 
-            <p className="break-all text-sm ">
-              {facilityDetails?.owner?.email}
-            </p>
+            <p className="break-all text-sm">{facilityDetails?.owner?.email}</p>
           </div>
         </div>
       </div>
