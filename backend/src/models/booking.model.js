@@ -39,8 +39,19 @@ const bookingSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["BOOKED", "CANCELLED", "COMPLETED"],
-      default: "BOOKED",
+      enum: [
+        "PAYMENT_PENDING",
+        "PAYMENT_FAILED",
+        "BOOKED",
+        "CANCELLED",
+        "COMPLETED",
+      ],
+      default: "PAYMENT_PENDING",
+    },
+
+    payment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Payment",
     },
 
     checkedIn: {
