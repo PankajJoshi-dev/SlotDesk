@@ -3,15 +3,26 @@ import {
   verifyRazorpayPaymentRequest,
 } from "../../../../api/paymentApi";
 import { toast } from "sonner";
+import { useBooking } from "../../../../contexts/BookingContext";
+import { useFacility } from "../../../../contexts/FacilityContext";
+import { useNavigate } from "react-router-dom";
 
 /*
- Note: 
-  Outer catch: Handles failure to create the order before the modal opens.
-  Inner catch: Handles failure to verify the signature after the user completes the transaction.
+  Note:
+  Outer catch: Handles failure while creating the Razorpay order
+  before the checkout modal opens.
+
+  Inner catch: Handles failure while sending the completed payment
+  details to the backend for verification.
 */
 
-function CheckoutButton({ amount = 500, onSuccess }) {
-  const handleCheckout = async () => {
+function CheckoutButton({ handleBooking }) {
+  const navigate = useNavigate();
+
+  const { partySize, isBooking } = useBooking();
+  const { facilityDetails } = useFacility();
+
+  const handleCheckout = async (booking) => {
     if (!window.Razorpay) {
       toast.error(
         "Payment system is taking longer to load. Check your internet connection and try again.",
@@ -19,7 +30,9 @@ function CheckoutButton({ amount = 500, onSuccess }) {
       return;
     }
 
-    const orderData = { amount };
+    const orderData = {
+      bookingId: booking._id,
+    };
 
     try {
       const res = await createRazorpayOrderRequest(orderData);
@@ -38,16 +51,18 @@ function CheckoutButton({ amount = 500, onSuccess }) {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              amount: amount, // Rupees
+              bookingId: booking._id,
             };
 
             const verificationResult =
               await verifyRazorpayPaymentRequest(paymentData);
 
-            console.log(verificationResult);
-
-            if (verificationResult.success && onSuccess) {
-              onSuccess(verificationResult);
+            if (verificationResult.success) {
+              navigate("/booking-success", {
+                state: {
+                  booking: verificationResult.data?.confirmedBooking,
+                },
+              });
             }
           } catch (error) {
             console.log(error.response);
@@ -67,10 +82,17 @@ function CheckoutButton({ amount = 500, onSuccess }) {
 
   return (
     <button
-      className="w-full sm:w-auto bg-primary hover:bg-primary-hover transition-all duration-200 px-8 py-3 rounded-md font-semibold shadow hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
-      onClick={handleCheckout}
+      className="w-full sm:w-auto bg-primary hover:bg-primary-hover transition-all duration-200 px-8 py-3 rounded-md font-medium shadow hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+      onClick={async () => {
+        const booking = await handleBooking();
+
+        if (!booking) return;
+
+        await handleCheckout(booking);
+      }}
+      disabled={isBooking}
     >
-      {`Pay ₹${amount}`}
+      {`Pay ₹${facilityDetails?.slotPrice * partySize || "-"}`}
     </button>
   );
 }

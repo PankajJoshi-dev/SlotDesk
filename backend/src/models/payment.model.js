@@ -16,6 +16,7 @@ const paymentSchema = new Schema(
     razorpayPaymentId: {
       type: String,
       required: true,
+      unique: true,
     },
 
     razorpaySignature: {
@@ -36,8 +37,14 @@ const paymentSchema = new Schema(
 
     status: {
       type: String,
-      enum: ["Verified", "Failed"],
-      default: "verified",
+      enum: [
+        "VERIFICATION_PASSED",
+        "VERIFICATION_FAILED",
+        "CONFIRMED",
+        "FAILED",
+        "REFUNDED",
+      ],
+      required: true,
     },
   },
   {
