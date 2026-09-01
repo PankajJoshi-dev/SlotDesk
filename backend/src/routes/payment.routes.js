@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createRazorpayOrder,
+  initializeRefund,
   verifyPayment,
 } from "../controllers/payment.controller.js";
 
@@ -20,5 +21,7 @@ paymentRouter
 paymentRouter
   .route("/verify-payment")
   .post(verifyJWT, validate(verifyPaymentSchema), verifyPayment);
+
+paymentRouter.route("/refund").post(verifyJWT, initializeRefund);
 
 export default paymentRouter;

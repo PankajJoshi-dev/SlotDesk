@@ -42,6 +42,7 @@ const paymentSchema = new Schema(
         "VERIFICATION_FAILED",
         "CONFIRMED",
         "FAILED",
+        "REFUNDING",
         "REFUNDED",
       ],
       required: true,
