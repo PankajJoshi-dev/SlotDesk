@@ -1,4 +1,3 @@
-import axios from "axios";
 import api from "./axios";
 
 // For debugging
@@ -20,4 +19,14 @@ const verifyRazorpayPaymentRequest = async (paymentData) => {
   return response.data;
 };
 
-export { createRazorpayOrderRequest, verifyRazorpayPaymentRequest };
+const refundRequest = async (bookingId) => {
+  const response = await api.post("payments/refund", { bookingId });
+  log(response.data);
+  return response.data;
+};
+
+export {
+  createRazorpayOrderRequest,
+  verifyRazorpayPaymentRequest,
+  refundRequest,
+};

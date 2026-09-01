@@ -7,6 +7,7 @@ import {
   getFacilityBookingsRequest,
 } from "../api/facilityApi";
 import { checkInRequest } from "../api/bookingApi";
+import { refundRequest } from "../api/paymentApi";
 
 const FacilityContext = createContext();
 
@@ -19,6 +20,7 @@ const FacilityProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [checkingInBookingId, setCheckingInBookingId] = useState(null);
+  const [refundBookingId, setRefundBookingId] = useState(null);
 
   async function registerFacility(facilityData) {
     setLoading(true);
@@ -99,6 +101,27 @@ const FacilityProvider = ({ children }) => {
     }
   }
 
+  async function refund(bookingId) {
+    setRefundBookingId(bookingId);
+
+    try {
+      const res = await refundRequest(bookingId);
+
+      const refundedBooking = res?.data?.booking;
+      setFacilityBookings((prev) =>
+        prev.map((booking) =>
+          booking._id === refundedBooking._id ? refundedBooking : booking,
+        ),
+      );
+
+      return res;
+    } catch (err) {
+      console.log(err.response);
+    } finally {
+      setRefundBookingId(null);
+    }
+  }
+
   return (
     <FacilityContext.Provider
       value={{
@@ -114,11 +137,13 @@ const FacilityProvider = ({ children }) => {
         deleteFacility,
         getFacilityBookings,
         checkIn,
+        refund,
         loading,
         setLoading,
         deleting,
         setDeleting,
         checkingInBookingId,
+        refundBookingId,
       }}
     >
       {children}
