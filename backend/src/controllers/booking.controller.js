@@ -14,6 +14,10 @@ const bookingPopulate = [
     path: "facility",
     select: "name slotDuration address.city openingTime category owner",
   },
+  {
+    path: "payment",
+    select: "status amount",
+  },
 ];
 
 function buildBookingFilters(validatedQuery) {
@@ -303,7 +307,7 @@ const checkIn = asyncHandler(async (req, res) => {
   const booking = await Booking.findById(bookingId).populate(bookingPopulate);
 
   if (!booking) {
-    throw new ApiError(404, "booking", "Booking does not exist.");
+    throw new ApiError(404, "booking", "Booking not found.");
   }
 
   if (!booking.facility.owner.equals(req.user._id)) {
