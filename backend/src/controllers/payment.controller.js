@@ -165,7 +165,7 @@ const verifyPayment = asyncHandler(async (req, res) => {
       paymentStatus = "CONFIRMED";
     } else {
       bookingStatus = "PENDING";
-      paymentStatus = "VERIFICATION_PASSED";
+      paymentStatus = "PENDING";
     }
   } else {
     if (razorpayPaymentStatus === "failed") {
@@ -173,10 +173,10 @@ const verifyPayment = asyncHandler(async (req, res) => {
       paymentStatus = "FAILED";
     } else if (razorpayPaymentStatus === "captured") {
       bookingStatus = "REJECTED";
-      paymentStatus = "VERIFICATION_FAILED";
+      paymentStatus = "CAPTURED";
     } else {
       bookingStatus = "PENDING";
-      paymentStatus = "VERIFICATION_FAILED";
+      paymentStatus = "PENDING";
     }
   }
 
@@ -187,6 +187,7 @@ const verifyPayment = asyncHandler(async (req, res) => {
     amount,
     user: req.user._id,
     status: paymentStatus,
+    verificationStatus: isSignatureValid,
   };
 
   // Record every payment

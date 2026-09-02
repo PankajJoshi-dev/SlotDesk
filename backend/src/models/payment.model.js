@@ -38,14 +38,25 @@ const paymentSchema = new Schema(
     status: {
       type: String,
       enum: [
-        "VERIFICATION_PASSED",
-        "VERIFICATION_FAILED",
+        "PENDING",
+        "CAPTURED",
         "CONFIRMED",
         "FAILED",
         "REFUNDING",
         "REFUNDED",
       ],
       required: true,
+    },
+
+    verificationStatus: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
+
+    razorpayRefundId: {
+      type: String,
+      default: null,
     },
   },
   {
