@@ -1,7 +1,5 @@
 import { createContext, useContext, useState } from "react";
 import { getMyBookingsRequest, cancelBookingRequest } from "../api/bookingApi";
-import { toast } from "sonner";
-import { BookKey } from "lucide-react";
 
 const MyBookingContext = createContext();
 

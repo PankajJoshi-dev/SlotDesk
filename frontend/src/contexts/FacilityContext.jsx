@@ -18,6 +18,7 @@ const FacilityProvider = ({ children }) => {
   const [facilityBookings, setFacilityBookings] = useState([]);
 
   const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [checkingInBookingId, setCheckingInBookingId] = useState(null);
   const [refundBookingId, setRefundBookingId] = useState(null);
@@ -47,14 +48,14 @@ const FacilityProvider = ({ children }) => {
   }
 
   async function editFacility(facilityId, facilityData) {
-    setLoading(true);
+    setUpdating(true);
 
     try {
       const res = await editFacilityRequest(facilityId, facilityData);
       setFacilityDetails(res?.data ?? res);
       return res;
     } finally {
-      setLoading(false);
+      setUpdating(false);
     }
   }
 
@@ -140,6 +141,8 @@ const FacilityProvider = ({ children }) => {
         refund,
         loading,
         setLoading,
+        updating,
+        setUpdating,
         deleting,
         setDeleting,
         checkingInBookingId,
