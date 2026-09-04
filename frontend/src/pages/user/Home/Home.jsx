@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -42,22 +42,20 @@ function Home() {
   const hasAnyBookings =
     nextBooking || todayBookings.length > 0 || upcomingBookings.length > 0;
 
-  if (!isHomeReady) {
-    return null;
-  }
-
   return (
     <div className="min-h-full pb-12">
       <div className="flex flex-col justify-between gap-3 border-b border-border-light py-8 sm:flex-row sm:items-end">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">
-            Hi {user?.fullName}
+            Hi, {user?.fullName?.split(" ")[0] ?? "there"}
           </h1>
 
           <p className="mt-1 text-sm text-text-secondary">
-            {hasAnyBookings
-              ? "Here's your booking overview."
-              : "Welcome to SlotDesk. Let's get you started."}
+            {isHomeReady
+              ? hasAnyBookings
+                ? "Here's your booking overview."
+                : "Welcome to SlotDesk. Let's get you started."
+              : "-"}
           </p>
         </div>
 
@@ -67,7 +65,7 @@ function Home() {
         </div>
       </div>
 
-      {!hasAnyBookings ? (
+      {isHomeReady && !hasAnyBookings ? (
         <div className="mt-8">
           <section className="rounded-2xl border border-border-light bg-card px-6 py-16 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -102,11 +100,13 @@ function Home() {
       ) : (
         <>
           <div className="my-8 grid gap-5 lg:grid-cols-2">
-            <NextBooking booking={nextBooking} />
-
-            <TodaySchedule bookings={todayBookings} />
+            <NextBooking booking={nextBooking} isHomeReady={isHomeReady} />
+            <TodaySchedule bookings={todayBookings} isHomeReady={isHomeReady} />
           </div>
-          <UpcomingBookings bookings={upcomingBookings.slice(1)} />
+          <UpcomingBookings
+            bookings={upcomingBookings.slice(1)}
+            isHomeReady={isHomeReady}
+          />
         </>
       )}
     </div>

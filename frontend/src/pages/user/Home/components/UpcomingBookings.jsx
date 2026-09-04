@@ -1,18 +1,12 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Clock3, Users } from "lucide-react";
 import getFacilityIcon from "../../../../utils/FacilityIcons";
-import formatTime from "../../../../utils/formatTIme";
+import formatTime from "../../../../utils/formatTime";
 
-function UpcomingBookings({ bookings }) {
-  const statusStyles = {
-    BOOKED: "bg-green-300 text-green-700 border-green-200",
-    COMPLETED: "bg-blue-300 text-blue-700 border-blue-200",
-    CANCELLED: "bg-gray-300 text-gray-600 border-gray-200",
-  };
-
-  if (bookings.length === 0) {
+function UpcomingBookings({ bookings, isHomeReady }) {
+  if (isHomeReady && bookings.length === 0) {
     return (
-      <section className="border-t border-border-light pt-8">
+      <section className="border-t border-border-light pt-8 min-h-50">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
           Upcoming bookings
         </p>
@@ -29,7 +23,7 @@ function UpcomingBookings({ bookings }) {
   }
 
   return (
-    <section className="border-t border-border-light pt-8">
+    <section className="border-t border-border-light pt-8 min-h-50">
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
           Upcoming bookings
@@ -48,84 +42,77 @@ function UpcomingBookings({ bookings }) {
       </div>
 
       <div className="mt-5">
-        {/* Desktop header */}
-        <div className="hidden sm:grid sm:grid-cols-[0.25fr_2fr_1.5fr_1fr_0.5fr] gap-4 border-b border-border-light px-3 pb-3 text-xs font-medium uppercase tracking-wider text-text-muted">
+        <div className="hidden sm:grid sm:grid-cols-[0.25fr_2fr_1.5fr_1fr] gap-4 border-b border-border-light px-3 pb-3 text-xs font-medium uppercase tracking-wider text-text-muted">
           <span>Date</span>
           <span>Facility</span>
           <span>Time</span>
           <span>People</span>
-          <span>Status</span>
         </div>
 
-        {bookings.map((booking) => {
-          const Icon = getFacilityIcon(booking?.facility?.category);
-          const startTime =
-            booking.facility.openingTime +
-            booking.slotIndex * booking.facility.slotDuration;
-          const endTime = startTime + booking.facility.slotDuration;
+        {!isHomeReady ? (
+          <p className="py-10 text-center text-sm text-text-secondary">
+            Loading...
+          </p>
+        ) : (
+          bookings.map((booking) => {
+            const Icon = getFacilityIcon(booking?.facility?.category);
+            const startTime =
+              booking.facility.openingTime +
+              booking.slotIndex * booking.facility.slotDuration;
+            const endTime = startTime + booking.facility.slotDuration;
 
-          return (
-            <Link
-              key={booking._id}
-              to={`/bookings/${booking._id}`}
-              className="group grid gap-4 border-b border-border-light px-3 py-5 transition hover:bg-card/60 grid-cols-2 sm:grid-cols-[0.25fr_2fr_1.5fr_1fr_0.5fr] items-center"
-            >
-              {/* Date */}
-              <div>
-                <p className="font-semibold">
-                  {new Date(booking.date).getDate()}
-                </p>
-
-                <p className="text-xs uppercase text-primary">
-                  {new Date(booking.date).toLocaleDateString("en-IN", {
-                    month: "short",
-                  })}
-                </p>
-              </div>
-
-              {/* Facility */}
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Icon size={19} />
-                </div>
-
-                <div className="min-w-0">
-                  <p className="truncate font-semibold">
-                    {booking.facility.name}
-                  </p>
-
-                  <p className="truncate text-sm text-text-secondary">
-                    {booking.facility.address?.city}
-                  </p>
-                </div>
-              </div>
-
-              {/* Time */}
-              <div className="flex items-center gap-2 text-sm">
-                <Clock3 size={16} className="text-primary" />
-                <span>
-                  {formatTime(startTime)} – {formatTime(endTime)}
-                </span>
-              </div>
-
-              {/* People */}
-              <div className="flex items-center gap-2 text-sm">
-                <Users size={16} className="text-primary" />
-                <span>
-                  {booking.partySize}{" "}
-                  {booking.partySize === 1 ? "Person" : "People"}
-                </span>
-              </div>
-
-              {/* Status */}
-              <span
-                className={`rounded-full self-start ml-0 mr-auto border px-3 py-1 text-xs font-semibold ${statusStyles[booking?.status]}`}
+            return (
+              <Link
+                key={booking._id}
+                to={`/bookings/${booking._id}`}
+                className="group grid gap-4 border-b border-border-light px-3 py-5 transition hover:bg-card/60 grid-cols-2 sm:grid-cols-[0.25fr_2fr_1.5fr_1fr] items-center"
               >
-                {booking?.status}
-              </span>
-            </Link>
-          );
-        })}
+                <div>
+                  <p className="font-semibold">
+                    {new Date(booking.date).getDate()}
+                  </p>
+
+                  <p className="text-xs uppercase text-primary">
+                    {new Date(booking.date).toLocaleDateString("en-IN", {
+                      month: "short",
+                    })}
+                  </p>
+                </div>
+
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <Icon size={19} />
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">
+                      {booking.facility.name}
+                    </p>
+
+                    <p className="truncate text-sm text-text-secondary">
+                      {booking.facility.address?.city}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm">
+                  <Clock3 size={16} className="text-primary" />
+                  <span>
+                    {formatTime(startTime)} – {formatTime(endTime)}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm">
+                  <Users size={16} className="text-primary" />
+                  <span>
+                    {booking.partySize}{" "}
+                    {booking.partySize === 1 ? "Person" : "People"}
+                  </span>
+                </div>
+              </Link>
+            );
+          })
+        )}
       </div>
     </section>
   );

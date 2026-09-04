@@ -1,16 +1,21 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, CalendarDays, Clock3, MapPin, Users } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  CalendarDays,
+  Clock3,
+  MapPin,
+  Users,
+} from "lucide-react";
 
 import getFacilityIcon from "../../../../utils/FacilityIcons";
-
 import formatDate from "../../../../utils/formatDate";
-import formatTime from "../../../../utils/formatTIme";
+import formatTime from "../../../../utils/formatTime";
 
-function NextBooking({ booking }) {
-  if (!booking) {
+function NextBooking({ booking, isHomeReady }) {
+  if (isHomeReady && !booking) {
     return (
-      <div className="rounded-2xl border border-border-light bg-card p-8">
+      <div className="rounded-2xl border border-border-light bg-card p-8 min-h-80">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
           Your next booking
         </p>
@@ -41,17 +46,24 @@ function NextBooking({ booking }) {
     );
   }
 
-  const Icon = getFacilityIcon(booking?.facility?.category);
+  const Icon =
+    (isHomeReady && getFacilityIcon(booking?.facility?.category)) || Building2;
 
-  const startTime =
-    booking.facility.openingTime +
-    booking.slotIndex * booking.facility.slotDuration;
+  let startTime = "-";
+  let endTime = "-";
 
-  const endTime = startTime + booking.facility.slotDuration;
+  if (isHomeReady && booking?.facility) {
+    const rawStart =
+      booking.facility.openingTime +
+      (booking.slotIndex || 0) * (booking.facility.slotDuration || 0);
+    const rawEnd = rawStart + (booking.facility.slotDuration || 0);
+
+    startTime = formatTime(rawStart);
+    endTime = formatTime(rawEnd);
+  }
 
   return (
-    <div className="rounded-2xl border border-border-light bg-card p-6">
-      {/* Header */}
+    <div className="rounded-2xl border border-border-light bg-card p-6 min-h-80">
       <div className="flex items-center justify-between border-b border-border-light pb-2">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
           Your next booking
@@ -70,12 +82,14 @@ function NextBooking({ booking }) {
 
           <div className="min-w-0">
             <h2 className="truncate text-lg font-semibold">
-              {booking.facility.name}
+              {isHomeReady ? booking?.facility?.name : "-"}
             </h2>
 
             <div className="mt-1 flex items-center gap-1.5 text-sm text-text-secondary">
               <MapPin size={15} />
-              <span className="truncate">{booking.facility.address?.city}</span>
+              <span className="truncate">
+                {isHomeReady ? booking?.facility?.address?.city : "-"}
+              </span>
             </div>
           </div>
         </div>
@@ -84,28 +98,31 @@ function NextBooking({ booking }) {
           <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-text-secondary">
             <div className="flex items-center gap-2">
               <CalendarDays size={16} className="text-primary" />
-              <span>{formatDate(booking.date)}</span>
+              <span>
+                {isHomeReady && booking?.date ? formatDate(booking.date) : "-"}
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
               <Clock3 size={16} className="text-primary" />
               <span>
-                {formatTime(startTime)} – {formatTime(endTime)}
+                {startTime} - {endTime}
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <Users size={16} className="text-primary" />
               <span>
-                {booking.partySize}{" "}
-                {booking.partySize === 1 ? "Person" : "People"}
+                {isHomeReady && booking?.partySize
+                  ? `${booking.partySize} ${booking.partySize === 1 ? "Person" : "People"}`
+                  : "-"}
               </span>
             </div>
           </div>
         </div>
 
         <Link
-          to={`/bookings/${booking._id}`}
+          to={isHomeReady && booking?._id ? `/bookings/${booking._id}` : "#"}
           className="group mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary"
         >
           View booking

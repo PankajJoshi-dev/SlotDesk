@@ -1,10 +1,9 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import formatDate from "../../../../utils/formatDate";
-import formatTime from "../../../../utils/formatTIme";
+import formatTime from "../../../../utils/formatTime";
 
-function TodaySchedule({ bookings }) {
+function TodaySchedule({ bookings, isHomeReady }) {
   const statusStyles = {
     BOOKED: "bg-green-300 text-green-700 border-green-200",
     COMPLETED: "bg-blue-300 text-blue-700 border-blue-200",
@@ -12,7 +11,7 @@ function TodaySchedule({ bookings }) {
   };
 
   return (
-    <div className="rounded-2xl border border-border-light bg-card p-6 max-h-80 overflow-y-auto">
+    <div className="rounded-2xl border border-border-light bg-card p-6 max-h-80 overflow-y-auto min-h-80">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -24,7 +23,7 @@ function TodaySchedule({ bookings }) {
           </p>
         </div>
 
-        {bookings.length > 0 && (
+        {isHomeReady && bookings.length > 0 && (
           <Link
             to="/bookings"
             className="group hidden items-center gap-1 text-sm font-medium text-primary sm:flex"
@@ -37,8 +36,11 @@ function TodaySchedule({ bookings }) {
           </Link>
         )}
       </div>
-
-      {bookings.length === 0 ? (
+      {!isHomeReady ? (
+        <p className="py-10 text-center text-sm text-text-secondary">
+          Loading...
+        </p>
+      ) : bookings.length === 0 ? (
         <div className="flex min-h-40 flex-col items-center justify-center text-center">
           <p className="text-sm font-medium">No bookings scheduled today</p>
           <p className="mt-1 text-sm text-text-secondary">
