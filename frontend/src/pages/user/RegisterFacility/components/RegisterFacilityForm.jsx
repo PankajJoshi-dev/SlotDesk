@@ -7,6 +7,7 @@ function RegisterFacilityForm() {
   const navigate = useNavigate();
   const { loading, registerFacility } = useFacility();
   const [errors, setErrors] = useState({});
+  const [imagePreview, setImagePreview] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -56,6 +57,9 @@ function RegisterFacilityForm() {
       ...prev,
       facilityImage: file,
     }));
+
+    // Generate and store a temporary URL of the file in state just for displaying preview
+    setImagePreview(URL.createObjectURL(file));
 
     setErrors((prev) => ({
       ...prev,
@@ -288,12 +292,8 @@ function RegisterFacilityForm() {
       "
       onSubmit={handleSubmit}
     >
-      <div className="mb-8">
+      <div className="mb-8 pb-4 border-b border-border-light flex flex-flow gap-2 items-center">
         <h2 className="text-xl font-semibold text-text">Register Facility</h2>
-
-        <p className="text-sm text-text-muted mt-1">
-          Add your facility details to get started.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6">
@@ -305,7 +305,8 @@ function RegisterFacilityForm() {
           <label
             htmlFor="facilityImage"
             className="
-              h-24
+              relative
+              h-40
               border
               border-dashed
               border-primary
@@ -315,21 +316,37 @@ function RegisterFacilityForm() {
               items-center
               justify-center
               cursor-pointer
-              hover:bg-surface
-              transition
+              overflow-hidden
+              bg-surface
+              group
             "
+            style={
+              imagePreview
+                ? {
+                    backgroundImage: `url(${imagePreview})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }
+                : undefined
+            }
           >
-            <span className="text-primary text-xl">+</span>
+            {imagePreview && (
+              <div className="absolute top-0 left-0 w-full h-full bg-black/50 group-hover:bg-black/60 transition" />
+            )}
 
-            <span className="text-sm text-text">
-              {formData.facilityImage
-                ? formData.facilityImage.name
-                : "Upload facility image"}
-            </span>
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <span className="text-white text-2xl">+</span>
 
-            <span className="text-xs text-text-muted mt-1">
-              JPG, PNG up to 5MB
-            </span>
+              <span className="text-sm text-text">
+                {formData.facilityImage
+                  ? formData.facilityImage.name
+                  : "Upload facility image"}
+              </span>
+
+              <span className="text-xs text-text-muted mt-1">
+                JPG, PNG up to 5MB
+              </span>
+            </div>
           </label>
 
           <input
