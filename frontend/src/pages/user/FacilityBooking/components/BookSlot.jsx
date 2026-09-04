@@ -32,7 +32,8 @@ function BookSlot({ facilityId }) {
       <DateSelector />
       <PartySize />
       <SlotSelector />
-      <div className="pt-6 mt-6 border-t border-border flex justify-end">
+
+      <div className="pt-4 mt-4 border-t border-border flex justify-end">
         <CheckoutButton handleBooking={handleBooking} />
       </div>
     </div>
