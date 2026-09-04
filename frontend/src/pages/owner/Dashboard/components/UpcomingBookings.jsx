@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 import formatDate from "../../../../utils/formatDate";
 
 function UpcomingBookings({ bookings, loading, isToday, getBookingTime }) {
@@ -20,10 +18,9 @@ function UpcomingBookings({ bookings, loading, isToday, getBookingTime }) {
       ) : (
         <div className="divide-y divide-border-light">
           {bookings.map((booking) => (
-            <Link
+            <div
               key={booking._id}
-              to={`/owner/facilities/${booking.facility?._id}/bookings`}
-              className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-card"
+              className="flex items-center justify-between gap-4 px-5 py-4 transition-colors"
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">
@@ -51,7 +48,7 @@ function UpcomingBookings({ bookings, loading, isToday, getBookingTime }) {
                   {getBookingTime(booking)}
                 </p>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

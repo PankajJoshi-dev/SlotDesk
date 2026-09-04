@@ -7,7 +7,7 @@ import {
   getAllFacilityBookingsRequest,
 } from "../../../api/facilityApi";
 import formatDate from "../../../utils/formatDate";
-import formatTime from "../../../utils/formatTIme";
+import formatTime from "../../../utils/formatTime";
 
 import DashboardStats from "./components/DashboardStats";
 import FacilitiesOverview from "./components/FacilitesOverview";
@@ -107,7 +107,7 @@ function Dashboard() {
 
       <DashboardStats stats={stats} loading={loading} />
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1.35fr_1fr]">
+      <div className="mt-8 grid gap-6 sm:grid-cols-2">
         <UpcomingBookings
           bookings={upcomingBookings}
           loading={loading}

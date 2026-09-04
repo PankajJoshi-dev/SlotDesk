@@ -1,21 +1,13 @@
-import { ArrowRight, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function FacilitiesOverview({ facilities, loading }) {
   return (
-    <section className="rounded-2xl border border-border-light bg-surface">
-      <div className="flex items-center justify-between border-b border-border-light px-5 py-4">
+    <section className="rounded-2xl border border-border-light bg-surface max-h-108 overflow-y-auto">
+      <div className="border-b border-border-light px-5 py-4">
         <div>
           <h2 className="font-semibold">Your facilities</h2>
         </div>
-
-        <Link
-          to="/owner/facilities"
-          className="text-text-secondary transition-colors hover:text-primary"
-          aria-label="View all facilities"
-        >
-          <ArrowRight size={18} />
-        </Link>
       </div>
 
       {loading ? (
