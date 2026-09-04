@@ -200,7 +200,7 @@ const verifyPayment = asyncHandler(async (req, res) => {
       payment: payment._id,
     },
     { returnDocument: "after", runValidators: true },
-  ).populate(["user", "facility"]);
+  ).populate(["user", "facility", "payment"]);
 
   if (!isSignatureValid) {
     throw new ApiError(400, "payment", "Payment verification failed.");

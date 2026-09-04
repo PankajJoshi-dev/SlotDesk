@@ -6,8 +6,10 @@ import {
   Users,
   MapPin,
   CircleCheckBig,
+  IndianRupee,
 } from "lucide-react";
-import formatTime from "../../../utils/formatTIme";
+import getFacilityIcon from "../../../utils/FacilityIcons";
+import formatTime from "../../../utils/formatTime";
 import formatDate from "../../../utils/formatDate";
 
 function BookingSuccess() {
@@ -34,13 +36,23 @@ function BookingSuccess() {
     CANCELLED: "bg-gray-300 text-gray-600 border-gray-200",
   };
 
-  const startTime =
-    booking?.facility?.openingTime +
-    booking?.slotIndex * booking?.facility?.slotDuration;
+  const paymentStatusStyles = {
+    CONFIRMED: "text-green-400",
+    FAILED: "text-red-400",
+    REFUNDING: "text-amber-400",
+    REFUNDED: "text-blue-400",
+  };
+
+  const Icon = getFacilityIcon(booking?.facility?.category);
+
+  const slotDuration = booking?.facility?.slotDuration;
+  const openingTime = booking?.facility?.openingTime;
+  const startTime = openingTime + booking?.slotIndex * slotDuration;
+  const endTime = startTime + slotDuration;
 
   return (
-    <div className="h-screen flex flex-col justify-start items-center gap-y-6 mt-24">
-      <div className="flex flex-col items-center gap-2">
+    <div className="min-h-screen flex flex-col justify-start items-center gap-y-6 px-4 py-12 sm:px-6 sm:py-16">
+      <div className="flex flex-col items-center gap-2 text-center">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-500/20">
           <CircleCheckBig className="h-10 w-10 text-green-500" />
         </div>
@@ -53,14 +65,26 @@ function BookingSuccess() {
       </div>
       <div className="w-full max-w-xl rounded-2xl bg-card shadow-sm transition-all">
         <div className="flex items-start justify-between gap-4 p-6 pb-4">
-          <div>
-            <h2 className="text-xl font-semibold text-foreground">
-              {booking?.facility?.name}
-            </h2>
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Icon className="h-5 w-5" />
+            </div>
 
-            <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" />
-              <span>{booking?.facility?.address?.city}</span>
+            <div className="min-w-0">
+              <h2 className="truncate text-xl font-semibold">
+                {booking?.facility?.name}
+              </h2>
+
+              <div className="mt-1 flex items-center gap-2 text-sm text-text-secondary">
+                <MapPin className="h-4 w-4" />
+                <span className="truncate">
+                  {booking?.facility?.address?.city}
+                </span>
+              </div>
+
+              <p className="mt-2 text-xs text-text-secondary">
+                Booking ID: {booking?.bookingId}
+              </p>
             </div>
           </div>
 
@@ -72,7 +96,7 @@ function BookingSuccess() {
         </div>
 
         <div className="space-y-4 border-y px-6 py-5">
-          <div className="flex flex-wrap justify-between items-center gap-x-6 gap-y-3 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-sm">
             <div className="flex items-center gap-2">
               <CalendarDays className="h-4 w-4 text-primary" />
               <span>{formatDate(booking?.date)}</span>
@@ -80,11 +104,13 @@ function BookingSuccess() {
 
             <div className="flex items-center gap-2">
               <Clock3 className="h-4 w-4 text-primary" />
-              <span>{formatTime(startTime)}</span>
+              <span>
+                {formatTime(startTime)} – {formatTime(endTime)}
+              </span>
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-between items-center gap-x-6 gap-y-3 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-sm">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-primary" />
               <span>
@@ -93,9 +119,19 @@ function BookingSuccess() {
               </span>
             </div>
 
-            <span className="text-muted-foreground">
-              • {booking?.facility?.slotDuration} min
-            </span>
+            {booking?.payment?.status && (
+              <div className="flex items-center gap-2 text-sm">
+                <IndianRupee className="h-4 w-4 text-primary" />
+                <span>{booking?.payment?.amount}</span>
+                <span
+                  className={`text-xs font-semibold ${paymentStatusStyles[booking?.payment?.status] || ""}`}
+                >
+                  {booking?.payment?.status === "CONFIRMED"
+                    ? "PAID"
+                    : booking?.payment?.status}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

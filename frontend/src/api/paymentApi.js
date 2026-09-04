@@ -14,13 +14,13 @@ const createRazorpayOrderRequest = async (orderData) => {
 };
 
 const verifyRazorpayPaymentRequest = async (paymentData) => {
-  const response = await api.post("payments/verify-payment", paymentData);
+  const response = await api.post("/payments/verify-payment", paymentData);
   log(response.data);
   return response.data;
 };
 
 const refundRequest = async (bookingId) => {
-  const response = await api.post("payments/refund", { bookingId });
+  const response = await api.post("/payments/refund", { bookingId });
   log(response.data);
   return response.data;
 };
