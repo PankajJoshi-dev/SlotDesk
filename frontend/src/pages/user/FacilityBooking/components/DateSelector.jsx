@@ -1,4 +1,3 @@
-import React from "react";
 import { useBooking } from "../../../../contexts/BookingContext";
 
 function DateSelector() {
@@ -38,7 +37,7 @@ function DateSelector() {
     isSelected
       ? errors?.date
         ? "border-red-500 bg-red-500"
-        : "bg-primary/20 text-primary-foreground border-primary"
+        : "bg-primary/20  border-primary"
       : "bg-card hover:bg-card/80 border-border"
   }`}
       >

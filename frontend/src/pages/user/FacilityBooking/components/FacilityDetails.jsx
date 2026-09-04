@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useFacility } from "../../../../contexts/FacilityContext";
 import {
   MapPin,
@@ -7,8 +7,10 @@ import {
   Users,
   Clock,
   User,
+  LoaderCircle,
 } from "lucide-react";
-import formatTime from "../../../../utils/formatTIme";
+import formatTime from "../../../../utils/formatTime";
+import getFacilityIcon from "../../../../utils/FacilityIcons";
 
 function FacilityDetails({ facilityId }) {
   const { facilityDetails, getFacilityDetails, loading } = useFacility();
@@ -17,26 +19,37 @@ function FacilityDetails({ facilityId }) {
     getFacilityDetails(facilityId);
   }, [facilityId]);
 
-  if (loading) {
-    return <div className="flex items-center justify-center">Loading...</div>;
-  }
+  const Icon = getFacilityIcon(facilityDetails?.category);
 
   return (
     <div className="mx-auto w-full max-w-5xl py-5">
       <div className="space-y-5">
-        <img
-          src={facilityDetails?.facilityImage?.imageUrl}
-          alt={facilityDetails?.name}
-          className="h-64 w-full rounded-xl border object-cover bg-primary/20"
-        />
+        <div className="aspect-16/7 bg-card content-center rounded-2xl">
+          {loading ? (
+            <LoaderCircle
+              size={48}
+              className="animate-spin text-text-secondary mx-auto"
+            />
+          ) : (
+            <img
+              src={facilityDetails?.facilityImage?.imageUrl}
+              alt={loading ? "-" : facilityDetails?.name}
+              className="h-full w-full object-cover rounded-2xl"
+            />
+          )}
+        </div>
 
         <div>
-          <h1 className="text-xl font-semibold">{facilityDetails?.name}</h1>
-
+          <div className="flex items-center gap-2">
+            <Icon size={20} className="shrink-0 text-primary" />
+            <h1 className="truncate text-2xl font-semibold">
+              {loading ? "-" : facilityDetails?.name}
+            </h1>
+          </div>
           <div className="mt-1 flex items-center gap-2">
             <MapPin className="h-4 w-4 text-text-muted" />
             <p className="text-sm text-text-muted">
-              {`${facilityDetails?.address?.city}, ${facilityDetails?.address?.state}`}
+              {`${loading ? "-" : facilityDetails?.address?.city}, ${loading ? "-" : facilityDetails?.address?.state}`}
             </p>
           </div>
         </div>
@@ -60,7 +73,11 @@ function FacilityDetails({ facilityId }) {
                   : "text-red-500 border-red-600"
               }`}
             >
-              {facilityDetails?.isActive ? "Active" : "Inactive"}
+              {loading
+                ? "-"
+                : facilityDetails?.isActive
+                  ? "Active"
+                  : "Inactive"}
             </span>
           </div>
 
@@ -71,7 +88,7 @@ function FacilityDetails({ facilityId }) {
             </div>
 
             <span className="font-medium">
-              {facilityDetails?.capacity} people
+              {loading ? "-" : facilityDetails?.capacity} people
             </span>
           </div>
 
@@ -82,7 +99,7 @@ function FacilityDetails({ facilityId }) {
             </div>
 
             <span className="font-medium">
-              {facilityDetails?.slotDuration} minutes
+              {loading ? "-" : facilityDetails?.slotDuration} minutes
             </span>
           </div>
 
@@ -92,7 +109,9 @@ function FacilityDetails({ facilityId }) {
               <span>Price per Slot</span>
             </div>
 
-            <span className="font-medium">₹{facilityDetails?.slotPrice}</span>
+            <span className="font-medium">
+              ₹{loading ? "-" : facilityDetails?.slotPrice}
+            </span>
           </div>
 
           <div className="flex items-center justify-between px-4 py-3">
@@ -102,7 +121,7 @@ function FacilityDetails({ facilityId }) {
             </div>
 
             <span className="font-medium">
-              {formatTime(facilityDetails?.openingTime)}
+              {loading ? "-" : formatTime(facilityDetails?.openingTime)}
             </span>
           </div>
 
@@ -113,7 +132,7 @@ function FacilityDetails({ facilityId }) {
             </div>
 
             <span className="font-medium">
-              {formatTime(facilityDetails?.closingTime)}
+              {loading ? "-" : formatTime(facilityDetails?.closingTime)}
             </span>
           </div>
 
@@ -123,7 +142,9 @@ function FacilityDetails({ facilityId }) {
               <span>Category</span>
             </div>
 
-            <span className="font-medium">{facilityDetails?.category}</span>
+            <span className="font-medium">
+              {loading ? "-" : facilityDetails?.category}
+            </span>
           </div>
 
           <div className="flex items-center justify-between gap-4 px-4 py-3">
@@ -133,21 +154,10 @@ function FacilityDetails({ facilityId }) {
             </div>
 
             <span className="font-medium text-right">
-              {`${facilityDetails?.address?.city}, ${facilityDetails?.address?.state} - ${facilityDetails?.address?.pinCode}`}
+              {loading
+                ? "-"
+                : `${facilityDetails?.address?.city}, ${facilityDetails?.address?.state} - ${facilityDetails?.address?.pinCode}`}
             </span>
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-border-light bg-card">
-          <div className="flex items-center gap-2 border-b border-border-light px-4 py-3">
-            <User className="h-4 w-4 text-primary" />
-            <h2 className="text-sm font-medium">Owner</h2>
-          </div>
-
-          <div className="space-y-1 px-4 py-4">
-            <p className="font-medium">{facilityDetails?.owner?.fullName}</p>
-
-            <p className="break-all text-sm">{facilityDetails?.owner?.email}</p>
           </div>
         </div>
       </div>
