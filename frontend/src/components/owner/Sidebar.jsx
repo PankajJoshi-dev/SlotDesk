@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { LoaderCircle, Home, LogOut, X, Globe } from "lucide-react";
+import { LoaderCircle, Home, LogOut, X, Globe, Building2 } from "lucide-react";
 
 import logo from "../../assets/images/logo.png";
-
 import { getMyFacilityRequest } from "../../api/facilityApi";
 import { useAuth } from "../../contexts/AuthContext";
-
 import SidebarLink from "./SidebarLink";
 import getFacilityIcon from "../../utils/FacilityIcons";
 
@@ -48,9 +46,10 @@ function Sidebar({ isOpen, onClose }) {
         />
       )}
 
-      <div
-        className={` fixed inset-y-0 left-0 z-50 w-60 lg:w-[12vw] bg-surface transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}
-  `}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 shrink-0 bg-surface transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="flex h-full min-w-0 flex-col">
           <div className="flex min-w-0 items-center justify-between px-4 pt-4 lg:justify-center">
@@ -71,7 +70,7 @@ function Sidebar({ isOpen, onClose }) {
             </button>
           </div>
 
-          <nav className="mt-6 flex min-w-0 flex-col gap-1 px-2">
+          <nav className="mt-6 flex flex-1 min-w-0 flex-col gap-1 overflow-y-auto px-2">
             <SidebarLink to="/owner" icon={Home} onClick={onClose}>
               Dashboard
             </SidebarLink>
@@ -109,7 +108,15 @@ function Sidebar({ isOpen, onClose }) {
               )}
             </div>
           </nav>
-          <div className="mt-auto px-2 pb-4">
+
+          <div className="mt-auto shrink-0 px-2 pb-4">
+            <SidebarLink
+              to="/register-facility"
+              icon={Building2}
+              onClick={onClose}
+            >
+              Register Facility
+            </SidebarLink>
             <SidebarLink to="/home" icon={Globe} onClick={onClose}>
               Home
             </SidebarLink>
@@ -123,7 +130,6 @@ function Sidebar({ isOpen, onClose }) {
                 size={18}
                 className="shrink-0 transition-colors group-hover:text-text"
               />
-
               <span className="min-w-0 truncate">Logout</span>
             </button>
 
@@ -131,14 +137,13 @@ function Sidebar({ isOpen, onClose }) {
               <p className="truncate text-xs font-medium text-text-secondary">
                 SlotDesk
               </p>
-
               <p className="mt-0.5 truncate text-[10px] text-text-secondary/70">
                 &copy; {new Date().getFullYear()} SlotDesk
               </p>
             </div>
           </div>
         </div>
-      </div>
+      </aside>
     </>
   );
 }
