@@ -1,20 +1,17 @@
 import { useState } from "react";
 import { Menu } from "lucide-react";
-
 import { Outlet } from "react-router-dom";
-
 import Sidebar from "../components/owner/Sidebar";
 
-function OwnerLayout({ children }) {
+function OwnerLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="min-w-0 flex-1">
-        {/* Mobile header */}
-        <header className="flex h-14 items-center border-b border-border px-4 lg:hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex h-14 shrink-0 items-center border-b border-border px-4 lg:hidden">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
@@ -28,8 +25,7 @@ function OwnerLayout({ children }) {
             SlotDesk
           </span>
         </header>
-
-        <main className="pt-6 px-6 sm:px-8 lg:px-10 mx-auto">
+        <main className="flex-1 min-h-0 overflow-y-auto pb-4 px-6 sm:px-8 lg:px-10">
           <Outlet />
         </main>
       </div>
