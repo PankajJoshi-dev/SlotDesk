@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import formatDate from "../../../../utils/formatDate";
-import formatTime from "../../../../utils/formatTIme";
+import formatTime from "../../../../utils/formatTime";
 
 function RecentBoookings({ facilityId, activeBookings, loading }) {
   const getBookingTime = (booking) => {
     const facility = booking.facility;
-    if (!facility) return "Time unavailable";
 
     return formatTime(
       facility.openingTime + booking.slotIndex * facility.slotDuration,
@@ -18,9 +18,13 @@ function RecentBoookings({ facilityId, activeBookings, loading }) {
         <h2 className="font-semibold">Recent bookings</h2>
         <Link
           to={`/owner/facilities/${facilityId}/bookings`}
-          className="text-sm text-primary hover:text-primary-hover"
+          className="group flex items-center gap-1 text-sm font-medium text-primary"
         >
           View all
+          <ArrowRight
+            size={15}
+            className="transition-transform group-hover:translate-x-0.5"
+          />
         </Link>
       </div>
       {!loading && activeBookings.length === 0 ? (
@@ -33,7 +37,7 @@ function RecentBoookings({ facilityId, activeBookings, loading }) {
         </p>
       ) : (
         <div className="divide-y divide-border-light">
-          {activeBookings.slice(0, 5).map((booking) => (
+          {activeBookings.slice(0, 6).map((booking) => (
             <div
               key={booking._id}
               className="flex items-center justify-between gap-3 px-5 py-4"

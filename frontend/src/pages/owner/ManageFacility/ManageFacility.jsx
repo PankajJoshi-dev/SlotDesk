@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Edit3, MapPin, Trash2 } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -39,9 +39,8 @@ function ManageFacility() {
     loadFacility();
   }, [facilityId]);
 
-  const activeBookings = useMemo(
-    () => facilityBookings.filter((booking) => booking.status === "BOOKED"),
-    [facilityBookings],
+  const activeBookings = facilityBookings.filter(
+    (booking) => booking.status === "BOOKED",
   );
 
   const Icon = getFacilityIcon(facilityDetails?.category);
@@ -62,7 +61,7 @@ function ManageFacility() {
   };
 
   return (
-    <div className="pb-12">
+    <div>
       <div className="flex flex-col gap-5 border-b border-border-light py-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 items-start gap-3">
           <Link
@@ -106,7 +105,7 @@ function ManageFacility() {
 
       <FacilityStats activeBookings={activeBookings} loading={loading} />
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_1fr]">
+      <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <FacilityDetails loading={loading} />
         <RecentBoookings
           facilityId={facilityId}

@@ -1,6 +1,6 @@
 import { CheckCircle2, Clock3, LoaderCircle } from "lucide-react";
 import { useFacility } from "../../../../contexts/FacilityContext";
-import formatTime from "../../../../utils/formatTIme";
+import formatTime from "../../../../utils/formatTime";
 
 function facilityDetails({ loading }) {
   const { facilityDetails } = useFacility();
