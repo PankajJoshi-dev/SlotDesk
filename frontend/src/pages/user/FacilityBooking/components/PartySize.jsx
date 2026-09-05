@@ -14,7 +14,7 @@ function PartySize() {
         type="number"
         id="partySize"
         name="partySize"
-        className={`w-24 border rounded p-2 transition-colors outline-none focus:border-white/80 focus:ring-1 focus:ring-white/80 text-text text-sm ${errors?.partySize ? "border-red-500" : "border-border"}`}
+        className={`w-24 border rounded p-2 transition-colors outline-none focus:border-white/80 focus:ring-1 focus:ring-white/80 text-text text-center text-sm ${errors?.partySize ? "border-red-500" : "border-border"}`}
         placeholder="Party Size"
         inputMode="numeric"
         max={9999}

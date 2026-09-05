@@ -25,10 +25,16 @@ function SlotSelector() {
 
     setSlotIndex(undefined); // Unselect selected slot
 
-    const fetchSlots = async () => getFacilitySlots(facilityId, bookingDate);
-
-    fetchSlots();
+    getFacilitySlots(facilityId, bookingDate);
   }, [facilityId, bookingDate]);
+
+  if (!bookingDate) {
+    return (
+      <p className="h-49 text-center text-sm text-text-secondary content-center">
+        Please select a date.
+      </p>
+    );
+  }
 
   const slotCards = slots.map((slot, i) => {
     const startTime = Number(
@@ -65,7 +71,7 @@ function SlotSelector() {
     <div className="space-y-2 ">
       <h1 className="text-lg font-semibold">Select Slot</h1>
 
-      <div className="h-40 lg:h-60 overflow-y-auto">
+      <div className="h-40 overflow-y-auto">
         {loading ? (
           <LoaderCircle
             size={36}
