@@ -19,10 +19,7 @@ const BookingProvider = ({ children }) => {
   useEffect(() => {
     if (!facilityId) return;
 
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-
-    setBookingDate(today);
+    setBookingDate("");
     setSlotIndex(undefined);
     setPartySize(1);
     setErrors({});
