@@ -1,5 +1,3 @@
-import apiError from "../utils/ApiError.js";
-
 export const validate = (schema, source = "body") => {
   return (req, res, next) => {
     const result = schema.safeParse(req[source]);

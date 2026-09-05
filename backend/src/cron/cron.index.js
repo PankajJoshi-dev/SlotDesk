@@ -21,8 +21,7 @@ const startCronJobs = () => {
   cron.schedule("*/5 * * * *", updateRefundState);
   cron.schedule("*/5 * * * *", completeBookings);
 
-  // Every 15 Minutes
-  cron.schedule("*/15 * * * *", cleanupRejectedBookings);
+  cron.schedule("*/5 * * * *", cleanupRejectedBookings);
 };
 
 export default startCronJobs;
