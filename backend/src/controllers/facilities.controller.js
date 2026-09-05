@@ -328,6 +328,14 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
     throw new ApiError(404, "facility", "Facility not found.");
   }
 
+  const bookingDay = date.toLocaleDateString("en-IN", {
+    weekday: "long",
+  });
+
+  if (!facility.workingDays.includes(bookingDay)) {
+    throw new ApiError(400, "date", "The facility is closed on this date.");
+  }
+
   const totalSlots = Math.floor(
     (facility.closingTime - facility.openingTime) / facility.slotDuration,
   );
@@ -335,7 +343,7 @@ const getFacilitySlots = asyncHandler(async (req, res) => {
   const bookings = await Booking.find({
     facility: facilityId,
     date,
-    status: "BOOKED",
+    status: { $in: ["PENDING", "BOOKED"] },
   });
 
   const today = new Date();

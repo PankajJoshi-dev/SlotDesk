@@ -47,6 +47,14 @@ const createBooking = asyncHandler(async (req, res) => {
     facility: req.validatedParams.facilityId,
   };
 
+  const bookingDay = bookingInfo.date.toLocaleDateString("en-IN", {
+    weekday: "long",
+  });
+
+  if (!facility.workingDays.includes(bookingDay)) {
+    throw new ApiError(400, "date", "The facility is closed on this date.");
+  }
+
   if (bookingInfo.partySize > facility.capacity) {
     throw new ApiError(
       400,
@@ -90,7 +98,7 @@ const createBooking = asyncHandler(async (req, res) => {
     facility: req.validatedParams.facilityId,
     date: bookingInfo.date,
     slotIndex: bookingInfo.slotIndex,
-    status: "BOOKED",
+    status: { $in: ["PENDING", "BOOKED"] },
   });
 
   const bookedCapacity = slotBookings.reduce(
@@ -123,7 +131,13 @@ const createBooking = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, populatedBooking, "Slot booked successfully."));
+    .json(
+      new ApiResponse(
+        201,
+        populatedBooking,
+        "Booking created. Complete payment to confirm your booking.",
+      ),
+    );
 });
 
 const getAllBookings = asyncHandler(async (req, res) => {
