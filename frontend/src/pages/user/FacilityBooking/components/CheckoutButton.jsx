@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useBooking } from "../../../../contexts/BookingContext";
 import { useFacility } from "../../../../contexts/FacilityContext";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 /*
   Note:
@@ -16,7 +17,7 @@ import { useNavigate } from "react-router-dom";
   details to the backend for verification.
 */
 
-function CheckoutButton({ handleBooking }) {
+function CheckoutButton({ handleBooking, isVerifying, setIsVerifying }) {
   const navigate = useNavigate();
 
   const { partySize, isBooking } = useBooking();
@@ -47,6 +48,7 @@ function CheckoutButton({ handleBooking }) {
 
         handler: async (response) => {
           try {
+            setIsVerifying(true);
             const paymentData = {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
@@ -69,6 +71,8 @@ function CheckoutButton({ handleBooking }) {
             toast.error(
               error.response?.data?.message || "Payment verification failed.",
             );
+          } finally {
+            setIsVerifying(false);
           }
         },
       };
@@ -90,7 +94,7 @@ function CheckoutButton({ handleBooking }) {
 
         await handleCheckout(booking);
       }}
-      disabled={isBooking}
+      disabled={isBooking || isVerifying}
     >
       {`Pay ₹${facilityDetails?.slotPrice * partySize || "-"}`}
     </button>
