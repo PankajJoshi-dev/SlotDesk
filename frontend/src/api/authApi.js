@@ -20,7 +20,7 @@ const registerRequest = async (userData) => {
 };
 
 const getUserRequest = async () => {
-  const response = await api.get("/auth/getUser");
+  const response = await api.get("/auth/getUser", { timeout: 60000 });
   log(response.data);
   return response.data;
 };

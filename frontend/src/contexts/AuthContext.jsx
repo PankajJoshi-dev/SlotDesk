@@ -13,7 +13,14 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  const [connectionFailed, setConnectionFailed] = useState(false);
+
   async function checkAuth() {
+    const timeout = setTimeout(() => {
+      setConnectionFailed(true);
+      setIsAuthChecking(false);
+    }, 60000);
+
     setIsAuthChecking(true);
 
     try {
@@ -22,6 +29,7 @@ const AuthProvider = ({ children }) => {
     } catch {
       setUser(null);
     } finally {
+      clearTimeout(timeout);
       setIsAuthChecking(false);
     }
   }
@@ -76,6 +84,7 @@ const AuthProvider = ({ children }) => {
         logout,
         isLoggingOut,
         isAuthChecking,
+        connectionFailed,
       }}
     >
       {children}
