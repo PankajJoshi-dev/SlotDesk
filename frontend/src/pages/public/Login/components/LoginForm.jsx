@@ -1,16 +1,24 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { toast } from "sonner";
+import { useLocation } from "react-router-dom";
 
 function LoginForm() {
+  const { state } = useLocation();
+  const { reason } = state || {};
+
   const { loading, login } = useAuth();
-
   const [formError, setFormError] = useState("");
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (reason === "protected-route") {
+      toast.info("Please log in to access this page.");
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +47,6 @@ function LoginForm() {
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-      {/* Email */}
       <div className="flex flex-col w-80">
         <label htmlFor="email" className="font-semibold text-xs text-text">
           Email
@@ -58,7 +65,6 @@ function LoginForm() {
         />
       </div>
 
-      {/* Password */}
       <div className="flex flex-col w-80">
         <label htmlFor="password" className="font-semibold text-xs text-text">
           Password
@@ -77,7 +83,6 @@ function LoginForm() {
         />
       </div>
 
-      {/* Form Error */}
       {formError && (
         <p className="text-sm font-medium text-error">{formError}</p>
       )}
