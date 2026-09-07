@@ -5,8 +5,8 @@ import {
 import { toast } from "sonner";
 import { useBooking } from "../../../../contexts/BookingContext";
 import { useFacility } from "../../../../contexts/FacilityContext";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 /*
   Note:
@@ -18,8 +18,10 @@ import { useState } from "react";
 */
 
 function CheckoutButton({ handleBooking, isVerifying, setIsVerifying }) {
+  const location = useLocation();
   const navigate = useNavigate();
 
+  const { user } = useAuth();
   const { partySize, isBooking } = useBooking();
   const { facilityDetails } = useFacility();
 
@@ -88,8 +90,15 @@ function CheckoutButton({ handleBooking, isVerifying, setIsVerifying }) {
     <button
       className="w-full sm:w-auto bg-primary hover:bg-primary-hover transition-all duration-200 px-8 py-3 rounded-md font-medium shadow hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
       onClick={async () => {
-        const booking = await handleBooking();
+        if (!user) {
+          toast.info("Please log in to continue with your booking.");
+          navigate("/login", {
+            state: { from: location },
+          });
+          return;
+        }
 
+        const booking = await handleBooking();
         if (!booking) return;
 
         await handleCheckout(booking);
