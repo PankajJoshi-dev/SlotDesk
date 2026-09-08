@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CalendarDays, Check, Clock3, Search } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  CalendarDays,
+  Check,
+  Clock3,
+  Search,
+} from "lucide-react";
 
 const features = [
   {
@@ -17,12 +24,16 @@ const features = [
     title: "Manage bookings",
     description: "View and manage your upcoming bookings from one dashboard.",
   },
+  {
+    icon: Building2,
+    title: "Manage your facility",
+    description: "Register your facility and manage its details and bookings.",
+  },
 ];
 
 function LandingPage() {
   return (
     <div>
-      {/* Hero */}
       <section>
         <div className="mx-auto grid min-h-[80vh] max-w-7xl items-center gap-14 px-6 py-28 sm:px-8 lg:grid-cols-2 lg:px-10">
           <div className="max-w-2xl">
@@ -90,7 +101,6 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
       <section className="border-y border-border-light bg-background px-6 py-20 sm:px-8 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto mb-11 max-w-xl text-center">
@@ -101,11 +111,12 @@ function LandingPage() {
               Everything you need
             </h2>
             <p className="mt-4 text-text-secondary">
-              Booking your space should be quick and stress-free.
+              Whether you're booking a space or managing one, we've got you
+              covered.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
             {features.map(({ icon: Icon, title, description }, index) => (
               <div
                 key={title}
@@ -129,7 +140,6 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Bottom CTA */}
       <section className="px-6 py-20 sm:px-8 lg:px-10">
         <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-primary/25 bg-card px-6 py-14 text-center shadow-xl shadow-black/10 sm:px-10 sm:py-16">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
@@ -139,7 +149,7 @@ function LandingPage() {
             Ready to book your space?
           </h2>
           <p className="mx-auto mt-4 leading-7 text-text-secondary">
-            Get started today and make your next booking in just a few clicks.
+            Book a facility or register your own space and manage it with ease.
           </p>
           <Link
             to="/facilities"
