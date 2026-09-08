@@ -2,7 +2,6 @@ import { useState } from "react";
 import logo from "../../assets/images/logo.png";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { toast } from "sonner";
 import { X, Menu } from "lucide-react";
 
 function Navbar() {
@@ -15,11 +14,6 @@ function Navbar() {
     try {
       await logout();
       closeMenu();
-
-      // Navigte directly to landing page even if private
-      window.location.replace("/");
-
-      toast.success("Logged out.");
     } catch {
       // Error is handled by the Axios interceptor.
     }

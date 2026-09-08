@@ -5,15 +5,27 @@ import {
   logoutRequest,
   registerRequest,
 } from "../api/authApi";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [user, setUser] = useState(null);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const [connectionFailed, setConnectionFailed] = useState(false);
+
+  useEffect(() => {
+    // Reset logout state after redirecting to the landing page
+    if (isLoggingOut && location.pathname === "/") {
+      setIsLoggingOut(false);
+    }
+  }, [isLoggingOut, location.pathname]);
 
   async function checkAuth() {
     const timeout = setTimeout(() => {
@@ -63,14 +75,20 @@ const AuthProvider = ({ children }) => {
 
   async function logout(authData) {
     setIsLoggingOut(true);
+    let logoutSucceeded = false;
 
     try {
       const res = await logoutRequest(authData);
       if (res.success) {
+        logoutSucceeded = true;
+        toast.success("Logged out.");
+        navigate("/", { replace: true });
         setUser(null);
       }
     } finally {
-      setIsLoggingOut(false);
+      if (!logoutSucceeded) {
+        setIsLoggingOut(false);
+      }
     }
   }
 

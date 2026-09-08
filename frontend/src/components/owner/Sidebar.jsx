@@ -32,7 +32,6 @@ function Sidebar({ isOpen, onClose }) {
   const handleLogout = async () => {
     try {
       await logout();
-      window.location.replace("/");
     } catch {}
   };
 
