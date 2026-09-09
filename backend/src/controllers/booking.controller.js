@@ -4,6 +4,7 @@ import ApiResponse from "../utils/ApiResponse.js";
 import Booking from "../models/booking.model.js";
 import Facility from "../models/facility.model.js";
 import generateBookingId from "../utils/generateBookingId.js";
+import { dayjs, APP_TIMEZONE, todayCheck } from "../utils/dayjs.js";
 
 const bookingPopulate = [
   {
@@ -75,22 +76,17 @@ const createBooking = asyncHandler(async (req, res) => {
     );
   }
 
-  // Resolving same-day expired slot booking bug
-  const now = new Date();
-
-  const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
+  // Use India's current time
+  const now = dayjs().tz(APP_TIMEZONE);
+  const minutesSinceMidnight = now.hour() * 60 + now.minute();
 
   const currentPossibleSlot = Math.floor(
     (minutesSinceMidnight - facility.openingTime) / facility.slotDuration,
   );
 
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
+  const isToday = todayCheck(bookingInfo.date);
 
-  if (
-    bookingInfo.date.getTime() === today.getTime() &&
-    currentPossibleSlot >= bookingInfo.slotIndex
-  ) {
+  if (isToday && currentPossibleSlot >= bookingInfo.slotIndex) {
     throw new ApiError(409, "slotIndex", "Slot expired.");
   }
 
@@ -111,11 +107,11 @@ const createBooking = asyncHandler(async (req, res) => {
   }
 
   for (const booking of slotBookings) {
-    if (booking.user.equals(req.user._id)) {
+    if (booking.user.equals(req.user._id) && booking.status !== "PENDING") {
       throw new ApiError(
         400,
         "slotIndex",
-        "You have already booked this slot.",
+        "You have already reserved this slot.",
       );
     }
   }
@@ -282,12 +278,16 @@ const cancelBooking = asyncHandler(async (req, res) => {
     throw new ApiError(409, "bookingId", "Past bookings cannot be cancelled.");
   }
 
-  if (bookingDate.getTime() === today.getTime()) {
+  const isToday = todayCheck(bookingDate);
+
+  if (isToday) {
     const startTime =
       booking.facility.openingTime +
       booking.slotIndex * booking.facility.slotDuration;
-    const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+    // Use India's current time
+    const now = dayjs().tz(APP_TIMEZONE);
+    const currentTime = now.hour() * 60 + now.minute();
 
     if (currentTime >= startTime - 30) {
       throw new ApiError(
@@ -355,10 +355,8 @@ const checkIn = asyncHandler(async (req, res) => {
   }
 
   const dueDate = new Date(booking?.date);
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
 
-  const isToday = dueDate.getTime() === today.getTime();
+  const isToday = todayCheck(dueDate);
 
   if (!isToday) {
     throw new ApiError(
@@ -368,8 +366,9 @@ const checkIn = asyncHandler(async (req, res) => {
     );
   }
 
-  const now = new Date();
-  const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
+  // Use India's current time
+  const now = dayjs().tz(APP_TIMEZONE);
+  const minutesSinceMidnight = now.hour() * 60 + now.minute();
 
   const currentOngoingSlot = Math.floor(
     (minutesSinceMidnight - booking.facility.openingTime) /

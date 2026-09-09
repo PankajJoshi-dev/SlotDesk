@@ -1,4 +1,5 @@
 import Booking from "../models/booking.model.js";
+import { dayjs, APP_TIMEZONE, todayCheck } from "../utils/dayjs.js";
 
 const updatePendingBookings = async () => {
   const bookings = await Booking.find({ status: "PENDING" }).populate(
@@ -49,18 +50,16 @@ const completeBookings = async () => {
     "facility",
   );
 
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-
-  const now = new Date();
-  const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
+  // Use India's current time
+  const now = dayjs().tz(APP_TIMEZONE);
+  const minutesSinceMidnight = now.hour() * 60 + now.minute();
 
   for (const booking of bookings) {
     if (!booking.facility) {
       continue;
     }
 
-    const isToday = booking.date.getTime() == today.getTime();
+    const isToday = todayCheck(booking.date);
 
     if (!isToday) {
       continue;
