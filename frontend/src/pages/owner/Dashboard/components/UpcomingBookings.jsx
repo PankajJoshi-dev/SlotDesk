@@ -1,6 +1,7 @@
+import { todayCheck } from "../../../../utils/dayjs";
 import formatDate from "../../../../utils/formatDate";
 
-function UpcomingBookings({ bookings, loading, isToday, getBookingTime }) {
+function UpcomingBookings({ bookings, loading, getBookingTime }) {
   return (
     <section className="rounded-2xl border border-border-light bg-surface">
       <div className="border-b border-border-light px-5 py-4">
@@ -41,7 +42,9 @@ function UpcomingBookings({ bookings, loading, isToday, getBookingTime }) {
 
               <div className="shrink-0 text-right">
                 <p className="text-sm font-medium">
-                  {isToday(booking.date) ? "Today" : formatDate(booking.date)}
+                  {todayCheck(booking.date)
+                    ? "Today"
+                    : formatDate(booking.date)}
                 </p>
 
                 <p className="mt-1 text-xs text-primary">

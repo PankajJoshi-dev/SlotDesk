@@ -12,15 +12,13 @@ import formatTime from "../../../utils/formatTime";
 import DashboardStats from "./components/DashboardStats";
 import FacilitiesOverview from "./components/FacilitesOverview";
 import UpcomingBookings from "./components/UpcomingBookings";
+import { todayCheck } from "../../../utils/dayjs";
 
 const getDayStart = (date = new Date()) => {
   const dayStart = new Date(date);
   dayStart.setHours(0, 0, 0, 0);
   return dayStart;
 };
-
-const isToday = (date) =>
-  getDayStart(date).getTime() === getDayStart().getTime();
 
 const getBookingTime = (booking) => {
   const facility = booking.facility;
@@ -62,7 +60,7 @@ function Dashboard() {
   );
 
   const todaysBookings = bookedBookings.filter((booking) =>
-    isToday(booking.date),
+    todayCheck(booking.date),
   );
 
   const upcomingBookings = bookedBookings
@@ -111,7 +109,6 @@ function Dashboard() {
         <UpcomingBookings
           bookings={upcomingBookings}
           loading={loading}
-          isToday={isToday}
           getBookingTime={getBookingTime}
         />
 

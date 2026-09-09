@@ -11,6 +11,7 @@ import {
 import getFacilityIcon from "../../../../utils/FacilityIcons";
 import formatDate from "../../../../utils/formatDate";
 import formatTime from "../../../../utils/formatTime";
+import { todayCheck } from "../../../../utils/dayjs";
 
 function NextBooking({ booking, isHomeReady }) {
   if (isHomeReady && !booking) {
@@ -99,7 +100,11 @@ function NextBooking({ booking, isHomeReady }) {
             <div className="flex items-center gap-2">
               <CalendarDays size={16} className="text-primary" />
               <span>
-                {isHomeReady && booking?.date ? formatDate(booking.date) : "-"}
+                {isHomeReady && booking?.date
+                  ? todayCheck(booking.date)
+                    ? "Today"
+                    : formatDate(booking.date)
+                  : "-"}
               </span>
             </div>
 

@@ -117,7 +117,6 @@ const FacilityProvider = ({ children }) => {
 
       return res;
     } catch (err) {
-      console.log(err.response);
     } finally {
       setRefundBookingId(null);
     }

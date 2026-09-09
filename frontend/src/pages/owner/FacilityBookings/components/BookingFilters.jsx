@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { useFacility } from "../../../../contexts/FacilityContext";
 
+import { dayjs, APP_TIMEZONE } from "../../../../utils/dayjs";
+
 function BookingFilters() {
   const { filters, setFilters } = useFacility();
 
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
+  // Construct today's Indian calendar date
+  const today = dayjs().tz(APP_TIMEZONE).format("YYYY-MM-DD");
 
   useEffect(() => setFilters({}), [setFilters]);
 

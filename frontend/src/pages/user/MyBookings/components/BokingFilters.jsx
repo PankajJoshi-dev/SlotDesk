@@ -1,17 +1,15 @@
 import { useEffect } from "react";
 import { useMyBooking } from "../../../../contexts/MyBookingContext";
 
+import { dayjs, APP_TIMEZONE } from "../../../../utils/dayjs";
+
 function BookingFilters() {
   const { filters, setFilters } = useMyBooking();
 
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
+  // Construct today's Indian calendar date
+  const today = dayjs().tz(APP_TIMEZONE).format("YYYY-MM-DD");
 
-  useEffect(() => {
-    return () => {
-      setFilters({});
-    };
-  }, [setFilters]);
+  useEffect(() => setFilters({}), [setFilters]);
 
   const handleClick = (status) => {
     setFilters({

@@ -69,7 +69,6 @@ function CheckoutButton({ handleBooking, isVerifying, setIsVerifying }) {
               });
             }
           } catch (error) {
-            console.log(error.response);
             toast.error(
               error.response?.data?.message || "Payment verification failed.",
             );

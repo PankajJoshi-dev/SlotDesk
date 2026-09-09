@@ -12,6 +12,7 @@ import formatTime from "../../../../utils/formatTime";
 import formatDate from "../../../../utils/formatDate";
 
 import { useMyBooking } from "../../../../contexts/MyBookingContext";
+import { dayjs, APP_TIMEZONE, todayCheck } from "../../../../utils/dayjs";
 
 function BookingCard({ booking }) {
   const { cancelBooking, cancellingBookingId } = useMyBooking();
@@ -42,10 +43,11 @@ function BookingCard({ booking }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const now = new Date();
-  const currentTime = now.getHours() * 60 + now.getMinutes();
+  // Use India's current time
+  const now = dayjs().tz(APP_TIMEZONE);
+  const currentTime = now.hour() * 60 + now.minute();
 
-  const isToday = bookingDate.getTime() === today.getTime();
+  const isToday = todayCheck(bookingDate);
   const isFutureDate = bookingDate.getTime() > today.getTime();
 
   const canCancel =
@@ -91,7 +93,7 @@ function BookingCard({ booking }) {
           <div className="flex flex-wrap gap-5">
             <div className="flex items-center gap-2 text-sm">
               <CalendarDays className="h-4 w-4 text-primary" />
-              <span>{formatDate(booking?.date)}</span>
+              <span>{isToday ? "Today" : formatDate(booking?.date)}</span>
             </div>
 
             <div className="flex items-center gap-2 text-sm">

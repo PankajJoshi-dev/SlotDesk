@@ -1,5 +1,6 @@
 import { useBooking } from "../../../../contexts/BookingContext";
 import { useFacility } from "../../../../contexts/FacilityContext";
+import { dayjs, APP_TIMEZONE } from "../../../../utils/dayjs";
 
 function DateSelector() {
   const { facilityDetails } = useFacility();
@@ -7,13 +8,13 @@ function DateSelector() {
 
   const dates = [];
 
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
+  // Construct today's Indian calendar date
+  let today = dayjs().tz(APP_TIMEZONE).format("YYYY-MM-DD");
+  today = new Date(today);
 
-  // Generate today and the next 6 dates
   for (let i = 0; i < 7; i++) {
     const date = new Date(today);
-    date.setDate(today.getDate() + i);
+    date.setUTCDate(today.getUTCDate() + i);
     dates.push(date);
   }
 

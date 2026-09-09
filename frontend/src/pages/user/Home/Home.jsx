@@ -9,6 +9,7 @@ import formatDate from "../../../utils/formatDate";
 import NextBooking from "./components/NextBooking";
 import TodaySchedule from "./components/TodaySchedule";
 import UpcomingBookings from "./components/UpcomingBookings";
+import { todayCheck } from "../../../utils/dayjs";
 
 function Home() {
   const { user } = useAuth();
@@ -23,11 +24,20 @@ function Home() {
     today.setUTCHours(0, 0, 0, 0);
 
     try {
-      let res = await getMyBookingsRequest({ date: today });
-      setTodayBookings(res.data);
+      let res = await getMyBookingsRequest();
+      setTodayBookings(res.data.filter((booking) => todayCheck(booking.date)));
+      setUpcomingBookings(
+        res.data
+          .filter((booking) => {
+            const bookingDate = new Date(booking?.date);
 
-      res = await getMyBookingsRequest({ status: "BOOKED" });
-      setUpcomingBookings(res.data.slice(0, 6)); // Only show at most 6 bookings on HomePage
+            return (
+              booking.status === "BOOKED" &&
+              bookingDate.getTime() >= today.getTime()
+            );
+          })
+          .slice(0, 6),
+      ); // Only show at most 6 bookings on HomePage
     } finally {
       setIsHomeReady(true);
     }
