@@ -3,8 +3,8 @@ import { ArrowRight, Clock3, Users } from "lucide-react";
 import getFacilityIcon from "../../../../utils/FacilityIcons";
 import formatTime from "../../../../utils/formatTime";
 
-function UpcomingBookings({ bookings, isHomeReady }) {
-  if (isHomeReady && bookings.length === 0) {
+function UpcomingBookings({ bookings }) {
+  if (bookings.length === 0) {
     return (
       <section className="border-t border-border-light pt-8 min-h-50">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -49,70 +49,64 @@ function UpcomingBookings({ bookings, isHomeReady }) {
           <span>People</span>
         </div>
 
-        {!isHomeReady ? (
-          <p className="py-10 text-center text-sm text-text-secondary">
-            Loading...
-          </p>
-        ) : (
-          bookings.map((booking) => {
-            const Icon = getFacilityIcon(booking?.facility?.category);
-            const startTime =
-              booking.facility.openingTime +
-              booking.slotIndex * booking.facility.slotDuration;
-            const endTime = startTime + booking.facility.slotDuration;
+        {bookings.map((booking) => {
+          const Icon = getFacilityIcon(booking?.facility?.category);
+          const startTime =
+            booking.facility.openingTime +
+            booking.slotIndex * booking.facility.slotDuration;
+          const endTime = startTime + booking.facility.slotDuration;
 
-            return (
-              <Link
-                key={booking._id}
-                to={`/bookings/${booking._id}`}
-                className="group grid gap-4 border-b border-border-light px-3 py-5 transition hover:bg-card/60 grid-cols-2 sm:grid-cols-[0.25fr_2fr_1.5fr_1fr] items-center"
-              >
-                <div>
-                  <p className="font-semibold">
-                    {new Date(booking.date).getDate()}
+          return (
+            <Link
+              key={booking._id}
+              to={`/bookings/${booking._id}`}
+              className="group grid gap-4 border-b border-border-light px-3 py-5 transition hover:bg-card/60 grid-cols-2 sm:grid-cols-[0.25fr_2fr_1.5fr_1fr] items-center"
+            >
+              <div>
+                <p className="font-semibold">
+                  {new Date(booking.date).getDate()}
+                </p>
+
+                <p className="text-xs uppercase text-primary">
+                  {new Date(booking.date).toLocaleDateString("en-IN", {
+                    month: "short",
+                  })}
+                </p>
+              </div>
+
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Icon size={19} />
+                </div>
+
+                <div className="min-w-0">
+                  <p className="truncate font-semibold">
+                    {booking.facility.name}
                   </p>
 
-                  <p className="text-xs uppercase text-primary">
-                    {new Date(booking.date).toLocaleDateString("en-IN", {
-                      month: "short",
-                    })}
+                  <p className="truncate text-sm text-text-secondary">
+                    {booking.facility.address?.city}
                   </p>
                 </div>
+              </div>
 
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Icon size={19} />
-                  </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Clock3 size={16} className="text-primary" />
+                <span>
+                  {formatTime(startTime)} – {formatTime(endTime)}
+                </span>
+              </div>
 
-                  <div className="min-w-0">
-                    <p className="truncate font-semibold">
-                      {booking.facility.name}
-                    </p>
-
-                    <p className="truncate text-sm text-text-secondary">
-                      {booking.facility.address?.city}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock3 size={16} className="text-primary" />
-                  <span>
-                    {formatTime(startTime)} – {formatTime(endTime)}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm">
-                  <Users size={16} className="text-primary" />
-                  <span>
-                    {booking.partySize}{" "}
-                    {booking.partySize === 1 ? "Person" : "People"}
-                  </span>
-                </div>
-              </Link>
-            );
-          })
-        )}
+              <div className="flex items-center gap-2 text-sm">
+                <Users size={16} className="text-primary" />
+                <span>
+                  {booking.partySize}{" "}
+                  {booking.partySize === 1 ? "Person" : "People"}
+                </span>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

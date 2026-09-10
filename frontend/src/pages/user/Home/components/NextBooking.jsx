@@ -13,8 +13,8 @@ import formatDate from "../../../../utils/formatDate";
 import formatTime from "../../../../utils/formatTime";
 import { todayCheck } from "../../../../utils/dayjs";
 
-function NextBooking({ booking, isHomeReady }) {
-  if (isHomeReady && !booking) {
+function NextBooking({ booking }) {
+  if (!booking) {
     return (
       <div className="rounded-2xl border border-border-light bg-card p-8 min-h-80">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -47,13 +47,12 @@ function NextBooking({ booking, isHomeReady }) {
     );
   }
 
-  const Icon =
-    (isHomeReady && getFacilityIcon(booking?.facility?.category)) || Building2;
+  const Icon = getFacilityIcon(booking?.facility?.category) || Building2;
 
   let startTime = "-";
   let endTime = "-";
 
-  if (isHomeReady && booking?.facility) {
+  if (booking?.facility) {
     const rawStart =
       booking.facility.openingTime +
       (booking.slotIndex || 0) * (booking.facility.slotDuration || 0);
@@ -83,13 +82,13 @@ function NextBooking({ booking, isHomeReady }) {
 
           <div className="min-w-0">
             <h2 className="truncate text-lg font-semibold">
-              {isHomeReady ? booking?.facility?.name : "-"}
+              {booking?.facility?.name}
             </h2>
 
             <div className="mt-1 flex items-center gap-1.5 text-sm text-text-secondary">
               <MapPin size={15} />
               <span className="truncate">
-                {isHomeReady ? booking?.facility?.address?.city : "-"}
+                {booking?.facility?.address?.city}
               </span>
             </div>
           </div>
@@ -100,7 +99,7 @@ function NextBooking({ booking, isHomeReady }) {
             <div className="flex items-center gap-2">
               <CalendarDays size={16} className="text-primary" />
               <span>
-                {isHomeReady && booking?.date
+                {booking?.date
                   ? todayCheck(booking.date)
                     ? "Today"
                     : formatDate(booking.date)
@@ -118,7 +117,7 @@ function NextBooking({ booking, isHomeReady }) {
             <div className="flex items-center gap-2">
               <Users size={16} className="text-primary" />
               <span>
-                {isHomeReady && booking?.partySize
+                {booking?.partySize
                   ? `${booking.partySize} ${booking.partySize === 1 ? "Person" : "People"}`
                   : "-"}
               </span>
@@ -127,7 +126,7 @@ function NextBooking({ booking, isHomeReady }) {
         </div>
 
         <Link
-          to={isHomeReady && booking?._id ? `/bookings/${booking._id}` : "#"}
+          to={booking?._id ? `/bookings/${booking._id}` : "#"}
           className="group mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary"
         >
           View booking

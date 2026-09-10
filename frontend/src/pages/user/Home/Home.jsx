@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, CalendarDays } from "lucide-react";
+import { ArrowRight, CalendarDays, LoaderCircle } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
 
 import { getMyBookingsRequest } from "../../../api/bookingApi";
@@ -17,7 +17,7 @@ function Home() {
   const [upcomingBookings, setUpcomingBookings] = useState([]);
   const [isHomeReady, setIsHomeReady] = useState(false);
 
-  async function makeHomeReady(params) {
+  async function makeHomeReady() {
     setIsHomeReady(false);
 
     const today = new Date();
@@ -47,6 +47,16 @@ function Home() {
     makeHomeReady();
   }, []);
 
+  if (!isHomeReady) {
+    return (
+      <div className="flex min-h-[90vh] items-center justify-center">
+        <div className="text-center">
+          <LoaderCircle className="mx-auto mb-3 animate-spin" size={24} />
+          <p className="text-sm text-text-secondary">Making Home ready...</p>
+        </div>
+      </div>
+    );
+  }
   const nextBooking = upcomingBookings[0];
 
   const hasAnyBookings =
@@ -61,11 +71,9 @@ function Home() {
           </h1>
 
           <p className="mt-1 text-sm text-text-secondary">
-            {isHomeReady
-              ? hasAnyBookings
-                ? "Here's your booking overview."
-                : "Welcome to SlotDesk. Let's get you started."
-              : "-"}
+            {hasAnyBookings
+              ? "Here's your booking overview."
+              : "Welcome to SlotDesk. Let's get you started."}
           </p>
         </div>
 
@@ -75,7 +83,7 @@ function Home() {
         </div>
       </div>
 
-      {isHomeReady && !hasAnyBookings ? (
+      {!hasAnyBookings ? (
         <div className="mt-8">
           <section className="rounded-2xl border border-border-light bg-card px-6 py-16 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -110,13 +118,10 @@ function Home() {
       ) : (
         <>
           <div className="my-8 grid gap-5 lg:grid-cols-2">
-            <NextBooking booking={nextBooking} isHomeReady={isHomeReady} />
-            <TodaySchedule bookings={todayBookings} isHomeReady={isHomeReady} />
+            <NextBooking booking={nextBooking} />
+            <TodaySchedule bookings={todayBookings} />
           </div>
-          <UpcomingBookings
-            bookings={upcomingBookings.slice(1)}
-            isHomeReady={isHomeReady}
-          />
+          <UpcomingBookings bookings={upcomingBookings.slice(1)} />
         </>
       )}
     </div>
