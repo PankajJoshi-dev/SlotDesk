@@ -8,19 +8,25 @@ const log = (data) => {
 };
 
 const registerFacilityRequest = async (facilityData) => {
-  const response = await api.post("/facilities", facilityData);
+  const response = await api.post("/facilities", facilityData, {
+    timeout: 60000,
+  });
   log(response.data);
   return response.data;
 };
 
 const editFacilityRequest = async (facilityId, facilityData) => {
-  const response = await api.patch(`/facilities/${facilityId}`, facilityData);
+  const response = await api.patch(`/facilities/${facilityId}`, facilityData, {
+    timeout: 60000,
+  });
   log(response.data);
   return response.data;
 };
 
 const deleteFacilityRequest = async (facilityId) => {
-  const response = await api.delete(`/facilities/${facilityId}`);
+  const response = await api.delete(`/facilities/${facilityId}`, {
+    timeout: 60000,
+  });
   log(response.data);
   return response.data;
 };
