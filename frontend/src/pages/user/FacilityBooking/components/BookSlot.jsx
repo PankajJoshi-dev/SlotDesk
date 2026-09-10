@@ -6,7 +6,13 @@ import CheckoutButton from "./CheckoutButton";
 
 import { useBooking } from "../../../../contexts/BookingContext";
 
-function BookSlot({ facilityId, isVerifying, setIsVerifying }) {
+function BookSlot({
+  facilityId,
+  isVerifying,
+  setIsVerifying,
+  initializing,
+  setInitializing,
+}) {
   const { bookFacility, setErrors, setFacilityId } = useBooking();
 
   useEffect(() => {
@@ -38,6 +44,8 @@ function BookSlot({ facilityId, isVerifying, setIsVerifying }) {
           handleBooking={handleBooking}
           isVerifying={isVerifying}
           setIsVerifying={setIsVerifying}
+          initializing={initializing}
+          setInitializing={setInitializing}
         />
       </div>
     </div>

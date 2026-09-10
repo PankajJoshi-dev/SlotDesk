@@ -17,7 +17,13 @@ import { useAuth } from "../../../../contexts/AuthContext";
   details to the backend for verification.
 */
 
-function CheckoutButton({ handleBooking, isVerifying, setIsVerifying }) {
+function CheckoutButton({
+  handleBooking,
+  isVerifying,
+  setIsVerifying,
+  initializing,
+  setInitializing,
+}) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -38,6 +44,7 @@ function CheckoutButton({ handleBooking, isVerifying, setIsVerifying }) {
     };
 
     try {
+      setInitializing(true);
       const res = await createRazorpayOrderRequest(orderData);
       const order = res?.data;
 
@@ -82,6 +89,8 @@ function CheckoutButton({ handleBooking, isVerifying, setIsVerifying }) {
       paymentObject.open();
     } catch (error) {
       toast.error(error.response?.data?.message || "Could not initiate order.");
+    } finally {
+      setInitializing(true);
     }
   };
 
@@ -102,7 +111,7 @@ function CheckoutButton({ handleBooking, isVerifying, setIsVerifying }) {
 
         await handleCheckout(booking);
       }}
-      disabled={isBooking || isVerifying}
+      disabled={isBooking || isVerifying || initializing}
     >
       {`Pay ₹${facilityDetails?.slotPrice * partySize || "-"}`}
     </button>

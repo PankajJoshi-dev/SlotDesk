@@ -4,9 +4,11 @@ import { useParams } from "react-router-dom";
 import OwnerDetails from "./components/OwnerDetails";
 import { useState } from "react";
 import PaymentVerificationOverlay from "./components/PaymentVerificationOverlay";
+import LoadingOverlay from "../../../components/common/LoadingOverlay";
 
 function FacilityBooking() {
   const { facilityId } = useParams();
+  const [initializing, setInitializing] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
 
   return (
@@ -21,11 +23,14 @@ function FacilityBooking() {
             facilityId={facilityId}
             isVerifying={isVerifying}
             setIsVerifying={setIsVerifying}
+            initializing={initializing}
+            setInitializing={setInitializing}
           />
           <OwnerDetails />
         </div>
       </div>
 
+      {initializing && <LoadingOverlay message={"Initializing pyment...."} />}
       {isVerifying && <PaymentVerificationOverlay />}
     </>
   );
