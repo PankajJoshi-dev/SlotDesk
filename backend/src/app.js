@@ -12,10 +12,14 @@ import paymentRouter from "./routes/payment.routes.js";
 import cors from "cors";
 
 const isProduction = process.env.NODE_ENV === "production";
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((url) => url.trim())
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: isProduction ? process.env.FRONTEND_URL : true,
+    origin: isProduction ? allowedOrigins : true,
     credentials: true,
   }),
 );
