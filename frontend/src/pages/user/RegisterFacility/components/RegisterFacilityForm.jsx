@@ -2,9 +2,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useFacility } from "../../../../contexts/FacilityContext";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 function RegisterFacilityForm() {
   const navigate = useNavigate();
+
+  const { checkAuth } = useAuth();
+
   const { loading, registerFacility } = useFacility();
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState("");
@@ -189,8 +193,9 @@ function RegisterFacilityForm() {
 
       const res = await registerFacility(data);
 
-      toast.success("Facility created successfully!");
+      await checkAuth();
 
+      toast.success("Facility created successfully!");
       navigate(`/owner/facilities/${res?.data?._id}`);
 
       setFormData({

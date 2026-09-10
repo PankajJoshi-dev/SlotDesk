@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useFacility } from "../../../contexts/FacilityContext";
+import { useNavigate } from "react-router-dom";
 
 function EditFacilityForm({ facilityId }) {
+  const navigate = useNavigate();
+
   const { facilityDetails, getFacilityDetails, updating, editFacility } =
     useFacility();
 
@@ -222,7 +225,8 @@ function EditFacilityForm({ facilityId }) {
       await editFacility(facilityId, data);
 
       toast.success("Facility updated successfully!");
-      window.location.replace(`/owner/facilities/${facilityId}`);
+
+      navigate(`/owner/facilities/${facilityId}`);
     } catch (error) {
       const field = error.response?.data?.field;
 

@@ -103,6 +103,7 @@ const AuthProvider = ({ children }) => {
         isLoggingOut,
         isAuthChecking,
         connectionFailed,
+        checkAuth,
       }}
     >
       {children}

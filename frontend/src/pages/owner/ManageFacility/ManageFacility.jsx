@@ -8,8 +8,10 @@ import getFacilityIcon from "../../../utils/FacilityIcons";
 import FacilityStats from "./components/FacilityStats";
 import RecentBoookings from "./components/RecentBookings";
 import FacilityDetails from "./components/FacilityDetails";
+import { useAuth } from "../../../contexts/AuthContext";
 
 function ManageFacility() {
+  const { checkAuth } = useAuth();
   const { facilityId } = useParams();
   const navigate = useNavigate();
   const {
@@ -54,6 +56,9 @@ function ManageFacility() {
 
     try {
       await deleteFacility(facilityId);
+
+      await checkAuth();
+
       navigate("/owner");
     } catch {
       setError("The facility could not be deleted. Please try again.");
